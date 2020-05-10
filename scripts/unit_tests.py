@@ -129,3 +129,16 @@ class UnitTests(unittest.TestCase):
         actual_result: str = skeleton.clear_from_garbage(garbage_text)
         expected_result: str = ''
         self.assertEqual(actual_result, expected_result)
+
+    def test_clear_garbage_one_dot_file(self):
+        garbage_text = """foooooo!?>>...XX11fooo!\n
+        foooooo!?>>...XX11fooo!\n\n\n\n
+        .\n
+        foooooo!?>>...XX11fooo!\n
+        foooooo!?>>...XX11fooo!\n
+        fo!?>>...XX11foo!\n
+        """
+        actual_result: str = skeleton.clear_from_garbage(garbage_text)
+        expected_result: str = '.'
+        self.assertEqual(actual_result, expected_result)
+
