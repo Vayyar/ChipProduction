@@ -66,6 +66,14 @@ def find_edges_of_section_centered_at(number, set_of_ints, to_remove_from):
     return start_index, end_index
 
 
+class Chip:
+    def __init__(self, row, column, state):
+        self.__row = row
+        self.__column = column
+        self.__state = Chip.translate_state_from_string_to_enum(state)
+
+
+
 def make_result_text(wafer_grid, neighbors_path: str) -> str:
     pass
 
