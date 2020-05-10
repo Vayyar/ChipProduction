@@ -90,7 +90,17 @@ class Chip:
         state: str = state_translation_dict[chip_state]
         return state
 
+    @property
+    def row(self):
+        return self.__row
 
+    @property
+    def column(self):
+        return self.__column
+
+    @property
+    def state(self):
+        return self.__state
 
 
 
