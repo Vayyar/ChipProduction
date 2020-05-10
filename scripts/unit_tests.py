@@ -185,3 +185,13 @@ class UnitTests(unittest.TestCase):
             self.assertTupleEqual(actual_result, expected_result)
             input_set.add(i)
 
+    def test_make_dict_of_neighbors_threshold(self):
+        neighbors_filename = 'neighbors_table.json'
+        neighbors_path: str = os.path.join(self.unit_tests_directory, neighbors_filename)
+        result_dict: Dict[int, int] = skeleton.make_dict_of_neighbors_threshold(neighbors_path)
+        expected_dict: Dict[int, int] = {1: 1, 2: 1, 3: 2, 4: 3, 5: 3, 6: 4, 7: 5, 8: 6}
+        self.assertDictEqual(result_dict, expected_dict)
+
+
+if __name__ == '__main__':
+    unittest.main()
