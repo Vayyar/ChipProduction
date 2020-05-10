@@ -102,6 +102,10 @@ class ChipsGrid:
         representation: str = '\n'.join(representation_lines)
         return representation
 
+    def __iter__(self):
+        for chips_row in self.map_as_grid:
+            for chip in chips_row:
+                yield chip
 
 
 class Chip:
