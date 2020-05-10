@@ -82,6 +82,20 @@ class ChipsGrid:
                 chips_grid_obj[-1].append(current_chip)
         return chips_grid_obj
 
+    @property
+    def map_as_grid(self):
+        return self.__map_as_grid
+
+    @property
+    def rows_number(self):
+        return len(self.map_as_grid)
+
+    @property
+    def columns_number(self):
+        if self.rows_number == 0:
+            return 0
+        return len(self.map_as_grid[0])
+
 
 class Chip:
     def __init__(self, row, column, state):
