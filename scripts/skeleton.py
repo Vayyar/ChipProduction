@@ -2,7 +2,11 @@ import argparse
 
 
 def parse_file(path_to_read_from: str):
-    pass
+    with open(path_to_read_from, 'r') as input_file:
+        file_content = input_file.read()
+    chips_map_as_string = clear_from_garbage(file_content)
+    chips_map_as_grid: ChipsGrid = ChipsGrid(chips_map_as_string)
+    return chips_map_as_grid
 
 def make_result_text(wafer_grid, neighbors_path: str) -> str:
     pass
