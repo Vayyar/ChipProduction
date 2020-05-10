@@ -1,5 +1,6 @@
 import argparse
 import enum
+import os
 
 from typing import List, Set, Dict
 
@@ -133,7 +134,6 @@ class ChipsGrid:
         return number_of_x_neighbors
 
 
-
 class Chip:
     def __init__(self, row, column, state):
         self.__row = row
@@ -174,14 +174,16 @@ class Chip:
         self.__state = new_state
 
 
-
-
-
 def make_result_text(wafer_grid, neighbors_path: str) -> str:
     pass
 
+
 def save_result_text(result: str, output_path: str):
-    pass
+    path_of_directory = os.path.dirname(output_path)
+    if not os.path.exists(path_of_directory):
+        os.makedirs(path_of_directory)
+    with open(output_path, 'w') as output_file:
+        output_file.write(result)
 
 
 class ChipState(enum.Enum):
