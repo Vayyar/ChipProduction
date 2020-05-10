@@ -202,12 +202,15 @@ def make_dict_of_neighbors_threshold(neighbors_path):
     return neighbors_dict
 
 
-def save_result_text(result_text, output_path):
-    path_of_directory = os.path.dirname(output_path)
-    if not os.path.exists(path_of_directory):
-        os.makedirs(path_of_directory)
-    with open(output_path, 'w') as output_file:
+def save_result_text(result_text, output_directory_path, input_path):
+    output_file_name = choose_output_filename(input_path)
+    output_file_path = os.path.join(output_directory_path, output_file_name)
+    with open(output_file_path, 'w') as output_file:
         output_file.write(result_text)
+
+
+def choose_output_filename(input_path):
+    return f'result_of_{os.path.basename(input_path)}'
 
 
 class ChipState(enum.Enum):
@@ -238,11 +241,11 @@ class WrongArgumentsException(Exception):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('input_path', type=str, help='path for input file.')
-    parser.add_argument('output_path', type=str, help='path for input file.')
-    parser.add_argument('neighbors_path', type=str, help='path for table file.')
+    parser.add_argument('input_file_path', type=str, help='path for input file.')
+    parser.add_argument('output_dir_path', type=str, help='path for output directory.')
+    parser.add_argument('neighbors_file_path', type=str, help='path for table file.')
     args = parser.parse_args()
     arguments_validation(args)
-    chips_grid = parse_file(args.input_path)
-    processed_text = make_result_text(chips_grid, args.neighbors_path)
-    save_result_text(processed_text, args.output_path, args.input_path)
+    chips_grid = parse_file(args.input_file_path)
+    processed_text = make_result_text(chips_grid, args.neighbors_file_path)
+    save_result_text(processed_text, args.output_dir_path, args.input_file_path)
