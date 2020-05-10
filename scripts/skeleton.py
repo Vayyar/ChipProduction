@@ -51,6 +51,21 @@ def find_longest_continuous_block_edges(set_of_ints: Set[int]):
     return max_section_start, max_section_end
 
 
+def find_edges_of_section_centered_at(number, set_of_ints, to_remove_from):
+    start_index: int = number - 1
+    end_index: int = number + 1
+    while start_index in set_of_ints:
+        to_remove_from.remove(start_index)
+        start_index -= 1
+    start_index += 1
+
+    while end_index in set_of_ints:
+        to_remove_from.remove(end_index)
+        end_index += 1
+    end_index -= 1
+    return start_index, end_index
+
+
 def make_result_text(wafer_grid, neighbors_path: str) -> str:
     pass
 
