@@ -106,7 +106,7 @@ class ChipsGrid:
         for chips_row in self.map_as_grid:
             for chip in chips_row:
                 yield chip
-                
+
     def neighbors_iterator(self, chip):
         for delta_rows in {-1, 0, 1}:
             for delta_columns in {-1, 0, 1}:
@@ -117,6 +117,13 @@ class ChipsGrid:
                     result_column: int = chip.column + delta_columns
                     current_neighbor: Chip = self.map_as_grid[result_row][result_column]
                     yield current_neighbor
+
+
+    def exist_place(self, chip, delta_rows, delta_columns):
+        result_row: int = chip.row + delta_rows
+        result_column: int = chip.column + delta_columns
+        is_existing_place: bool = 0 <= result_row < self.rows_number and 0 <= result_column < self.columns_number
+        return is_existing_place
 
 
 class Chip:
