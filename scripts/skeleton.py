@@ -71,6 +71,16 @@ class ChipsGrid:
     def __init__(self, map_as_string: str):
         self.__map_as_grid: List[List[Chip]] = ChipsGrid.make_chips_grid(map_as_string)
 
+    @staticmethod
+    def make_chips_grid(map_as_string: str):
+        map_as_list: List[str] = map_as_string.split('\n')
+        chips_grid_obj: List[List[Chip]] = list()
+        for row_index, chips_row in enumerate(map_as_list):
+            chips_grid_obj.append([])
+            for column_index, chip_state in enumerate(chips_row):
+                current_chip: Chip = Chip(row_index, column_index, chip_state)
+                chips_grid_obj[-1].append(current_chip)
+        return chips_grid_obj
 
 
 class Chip:
