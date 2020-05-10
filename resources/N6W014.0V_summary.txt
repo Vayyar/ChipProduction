@@ -1,0 +1,15 @@
+Site   :    VAYYAR
+Product:    VYYR7202-B4
+LotID  :    N6W014.0V
+waferQty: 6
+
+MAPPING              WAFER_ID  BIN 1
+N6W014.0V-19.txt N6W014.0V-19    679
+N6W014.0V-20.txt N6W014.0V-20    679
+N6W014.0V-22.txt N6W014.0V-22    657
+N6W014.0V-23.txt N6W014.0V-23    660
+N6W014.0V-24.txt N6W014.0V-24    664
+N6W014.0V-25.txt N6W014.0V-25    657
+
+                        TOTAL   3996
+
