@@ -102,6 +102,11 @@ class Chip:
     def state(self):
         return self.__state
 
+    @state.setter
+    def state(self, new_state):
+        self.__state = new_state
+
+
 
 
 
