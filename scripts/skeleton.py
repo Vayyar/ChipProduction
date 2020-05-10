@@ -4,6 +4,7 @@ import os
 
 from typing import List, Set, Dict
 
+
 def parse_file(path_to_read_from: str):
     with open(path_to_read_from, 'r') as input_file:
         file_content = input_file.read()
@@ -174,8 +175,18 @@ class Chip:
         self.__state = new_state
 
 
-def make_result_text(wafer_grid, neighbors_path: str) -> str:
-    pass
+def make_result_text(wafer_grid: 'ChipsGrid', neighbors_path: str) -> str:
+    neighbors_table: Dict[int, int] = make_dict_of_neighbors_threshold(neighbors_path)
+    for grid_cell in wafer_grid:
+        if grid_cell.state != ChipState.Live:
+            continue
+        total_number_of_cell_neighbors = wafer_grid.number_of_neighbors(grid_cell)
+        total_number_of_x_neighbors = wafer_grid.number_of_x_neighbors(grid_cell)
+        threshold = neighbors_table[total_number_of_cell_neighbors]
+        new_state = ChipState.DieByPrediction if total_number_of_x_neighbors >= threshold else ChipState.Live
+        grid_cell.state = new_state
+
+    return str(wafer_grid)
 
 
 def save_result_text(result: str, output_path: str):
