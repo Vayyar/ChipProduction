@@ -83,6 +83,15 @@ class Chip:
     def __repr__(self):
         return Chip.translate_state_from_enum_to_string(self.state)
 
+    @staticmethod
+    def translate_state_from_enum_to_string(chip_state: 'ChipState'):
+        state_translation_dict: Dict[ChipState, str] = {ChipState.Die: 'X', ChipState.Live: '1',
+                                                        ChipState.NotAChip: '.', ChipState.DieByPrediction: 'Y'}
+        state: str = state_translation_dict[chip_state]
+        return state
+
+
+
 
 
 
