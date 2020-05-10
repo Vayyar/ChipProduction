@@ -25,6 +25,16 @@ class UnitTests(unittest.TestCase):
                                     "111"
         self.a_tester(neighbors_filename, input_text, expected_output_text)
 
+    def test_dots(self):
+        neighbors_filename = 'neighbors_table.json'
+        input_text: str = "...\n" \
+                          "...\n" \
+                          "..."
+        expected_output_text: str = "...\n" \
+                                    "...\n" \
+                                    "..."
+        self.a_tester(neighbors_filename, input_text, expected_output_text)
+
     def calculate_output(self, neighbors_filename: str, input_text: str):
         path_for_neighbors_table: str = os.path.join(self.unit_tests_directory, neighbors_filename)
         input_grid: skeleton.ChipsGrid = skeleton.ChipsGrid(input_text)
