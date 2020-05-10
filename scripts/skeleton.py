@@ -1,6 +1,7 @@
 import argparse
 import enum
 import os
+import json
 
 from typing import List, Set, Dict
 
@@ -187,6 +188,13 @@ def make_result_text(wafer_grid: 'ChipsGrid', neighbors_path: str) -> str:
         grid_cell.state = new_state
 
     return str(wafer_grid)
+
+
+def make_dict_of_neighbors_threshold(neighbors_path: str):
+    with open(neighbors_path) as neighbors_json_file:
+        data: Dict[str, int] = json.load(neighbors_json_file)
+    neighbors_dict: Dict[int, int] = {int(key): value for key, value in data.items()}
+    return neighbors_dict
 
 
 def save_result_text(result: str, output_path: str):
