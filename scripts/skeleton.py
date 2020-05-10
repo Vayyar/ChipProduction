@@ -221,13 +221,16 @@ class ChipState(enum.Enum):
     NotAChip = 4
 
 
-def arguments_validation(args):
-    for attribute, attribute_argument in vars(args).items():
+def arguments_validation(arguments):
     for attribute, attribute_argument in vars(arguments).items():
         if 'path' not in attribute:
             continue
         if not attribute_argument.exists():
             raise WrongArgumentsException(f"The path {attribute_argument} don't exist")
+        if 'dir' in attribute and attribute_argument.is_file():
+            raise WrongArgumentsException(f"The path {attribute_argument} is a file while we expect to a directory")
+        if 'file' in attribute and attribute_argument.is_dir():
+            raise WrongArgumentsException(f"The path {attribute_argument} is a directory while we expect a file")
 
 
 class WrongArgumentsException(Exception):
