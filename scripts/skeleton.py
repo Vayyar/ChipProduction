@@ -191,7 +191,7 @@ class Chip:
         self.__state = new_state
 
 
-def make_result_text(wafer_grid, neighbors_path):
+def apply_algorithm_on_grid(wafer_grid, neighbors_path):
     neighbors_table = make_dict_of_neighbors_threshold(neighbors_path)
     for grid_cell in wafer_grid:
         if grid_cell.state != ChipState.Live:
@@ -202,7 +202,7 @@ def make_result_text(wafer_grid, neighbors_path):
         new_state = ChipState.DieByPrediction if total_number_of_x_neighbors >= threshold else ChipState.Live
         grid_cell.state = new_state
 
-    return str(wafer_grid)
+    return wafer_grid
 
 
 def make_dict_of_neighbors_threshold(neighbors_path):
@@ -212,22 +212,16 @@ def make_dict_of_neighbors_threshold(neighbors_path):
     return neighbors_dict
 
 
-def save_result_text(result_text, output_directory_path, input_path):
+def save_result_text(result_grid, output_directory_path, input_path):
+    grid_text = str(result_grid)
     output_file_name = choose_output_filename(input_path)
     output_file_path = output_directory_path / output_file_name
     with open(output_file_path, 'w') as output_file:
-        output_file.write(result_text)
+        output_file.write(grid_text)
 
 
 def choose_output_filename(input_path):
     return f'result_of_{Path(input_path).stem}.txt'
-
-
-class ChipState(enum.Enum):
-    Live = 1
-    Die = 2
-    DieByPrediction = 3
-    NotAChip = 4
 
 
 def arguments_validation(arguments):
@@ -268,5 +262,5 @@ if __name__ == '__main__':
     process_args(args)
     arguments_validation(args)
     chips_grid = parse_file(args.input_file_path)
-    processed_text = make_result_text(chips_grid, args.neighbors_file_path)
-    save_result_text(processed_text, args.output_dir_path, args.input_file_path)
+    processed_grid = apply_algorithm_on_grid(chips_grid, args.neighbors_file_path)
+    save_result_text(processed_grid, args.output_dir_path, args.input_file_path)
