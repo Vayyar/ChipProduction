@@ -34,10 +34,12 @@ def clear_un_relevant_lines(chips_map_as_str):
 
 
 def is_contains_only_relevant_characters(line):
-    """@pre: assume all line are striped
-       check that all characters are of chips map
     """
-    relevant_characters_set = {'X', '.', '1'}
+    assume all line are striped
+    :param line:
+    :return: True iff all characters are of chips map
+    """
+    relevant_characters_set = {'X', '.', '1', 'Y'}
     is_all_relevant_characters = all([char in relevant_characters_set for char in line])
     is_not_garbage_line = is_all_relevant_characters
     return is_not_garbage_line
