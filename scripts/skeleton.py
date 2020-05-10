@@ -38,6 +38,18 @@ def is_not_garbage(line: str, max_not_garbage_line_length: int):
     return is_not_garbage_characters(line) and len(line) == max_not_garbage_line_length and len(line) > 0
 
 
+def find_longest_continuous_block_edges(set_of_ints: Set[int]):
+    max_section_start, max_section_end = -1, -2
+    set_of_ints_copy = set_of_ints.copy()
+    for number in set_of_ints:
+        if number not in set_of_ints_copy:
+            continue
+        current_section_start, current_section_end = \
+            find_edges_of_section_centered_at(number, set_of_ints, set_of_ints_copy)
+        if current_section_end - current_section_start > max_section_end - max_section_start:
+            max_section_start, max_section_end = current_section_start, current_section_end
+    return max_section_start, max_section_end
+
 
 def make_result_text(wafer_grid, neighbors_path: str) -> str:
     pass
