@@ -1,7 +1,8 @@
 import argparse
 import enum
 import json
-import os
+
+from pathlib import Path
 
 
 # TODO I got this error when trying Gooey and I doesn't know what to do
@@ -204,13 +205,13 @@ def make_dict_of_neighbors_threshold(neighbors_path):
 
 def save_result_text(result_text, output_directory_path, input_path):
     output_file_name = choose_output_filename(input_path)
-    output_file_path = os.path.join(output_directory_path, output_file_name)
+    output_file_path = output_directory_path / output_file_name
     with open(output_file_path, 'w') as output_file:
         output_file.write(result_text)
 
 
 def choose_output_filename(input_path):
-    return f'result_of_{os.path.basename(input_path)}'
+    return f'result_of_{Path(input_path).stem}.txt'
 
 
 class ChipState(enum.Enum):
@@ -222,9 +223,10 @@ class ChipState(enum.Enum):
 
 def arguments_validation(args):
     for attribute, attribute_argument in vars(args).items():
+    for attribute, attribute_argument in vars(arguments).items():
         if 'path' not in attribute:
             continue
-        if not os.path.exists(attribute_argument):
+        if not attribute_argument.exists():
             raise WrongArgumentsException(f"The path {attribute_argument} don't exist")
 
 
@@ -239,12 +241,19 @@ class WrongArgumentsException(Exception):
         return f'WrongArgumentException!!!  {self.message if self.message is not None else ""}'
 
 
+def process_args(arguments):
+    for attribute, attribute_argument in vars(arguments).items():
+        if 'path' in attribute:
+            setattr(arguments, attribute, Path(attribute_argument))
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('input_file_path', type=str, help='path for input file.')
     parser.add_argument('output_dir_path', type=str, help='path for output directory.')
     parser.add_argument('neighbors_file_path', type=str, help='path for table file.')
     args = parser.parse_args()
+    process_args(args)
     arguments_validation(args)
     chips_grid = parse_file(args.input_file_path)
     processed_text = make_result_text(chips_grid, args.neighbors_file_path)
