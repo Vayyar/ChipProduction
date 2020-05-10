@@ -80,6 +80,9 @@ class Chip:
         chip_state: ChipState = state_translation_dict[state]
         return chip_state
 
+    def __repr__(self):
+        return Chip.translate_state_from_enum_to_string(self.state)
+
 
 
 
