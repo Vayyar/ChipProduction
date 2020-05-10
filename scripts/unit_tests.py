@@ -84,6 +84,33 @@ class UnitTests(unittest.TestCase):
                                     "..."
         self.a_tester(self.neighbors_filename, input_text, expected_output_text)
 
+    def test_1_neighbor(self):
+        input_text: str = "...\n" \
+                          ".1X\n" \
+                          "..."
+        expected_output_text: str = "...\n" \
+                                    ".YX\n" \
+                                    "..."
+        self.a_tester(self.neighbors_filename, input_text, expected_output_text)
+
+    def test_2_neighbors(self):
+        input_text: str = "..1\n" \
+                          ".1X\n" \
+                          "..."
+        expected_output_text: str = "..Y\n" \
+                                    ".YX\n" \
+                                    "..."
+        self.a_tester(self.neighbors_filename, input_text, expected_output_text)
+
+    def test_3_neighbors_under_threshold(self):
+        input_text: str = ".11\n" \
+                          ".1X\n" \
+                          "..."
+        expected_output_text: str = ".11\n" \
+                                    ".1X\n" \
+                                    "..."
+        self.a_tester(self.neighbors_filename, input_text, expected_output_text)
+
     # Takes 2 seconds
     def test_no_less_xs_no_more_1s_no_more_dots_no_other_chars(self):
 
