@@ -160,3 +160,11 @@ class UnitTests(unittest.TestCase):
                                '111'
         self.assertEqual(actual_result, expected_result)
 
+    def test_chip_grid(self):
+        rows_dimension, column_dimension = 5, 5
+        sample_size: int = 10_000
+        for _, test_wafer in zip(range(sample_size), UnitTests.input_generator(rows_dimension, column_dimension)):
+            wafer_grid: skeleton.ChipsGrid = skeleton.ChipsGrid(test_wafer)
+            wafer_text_result: str = str(wafer_grid)
+            self.assertEqual(test_wafer, wafer_text_result)
+
