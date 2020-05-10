@@ -96,6 +96,13 @@ class ChipsGrid:
             return 0
         return len(self.map_as_grid[0])
 
+    def __repr__(self):
+        representation_grid: List[List[str]] = [[str(chip) for chip in grid_row] for grid_row in self.map_as_grid]
+        representation_lines: List[str] = [''.join(representation_row) for representation_row in representation_grid]
+        representation: str = '\n'.join(representation_lines)
+        return representation
+
+
 
 class Chip:
     def __init__(self, row, column, state):
