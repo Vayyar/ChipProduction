@@ -75,7 +75,14 @@ class UnitTests(unittest.TestCase):
                                     "XXX"
         self.a_tester(self.neighbors_filename, input_text, expected_output_text)
 
-    
+    def test_3_neighbors(self):
+        input_text: str = ".1X\n" \
+                          ".1X\n" \
+                          "..."
+        expected_output_text: str = ".YX\n" \
+                                    ".YX\n" \
+                                    "..."
+        self.a_tester(self.neighbors_filename, input_text, expected_output_text)
 
     # Takes 2 seconds
     def test_no_less_xs_no_more_1s_no_more_dots_no_other_chars(self):
