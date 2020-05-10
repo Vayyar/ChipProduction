@@ -217,12 +217,32 @@ class ChipState(enum.Enum):
     NotAChip = 4
 
 
+def arguments_validation(args):
+    for attribute, attribute_argument in vars(args).items():
+        if 'path' not in attribute:
+            continue
+        if not os.path.exists(attribute_argument):
+            raise WrongArgumentsException(f"The path {attribute_argument} don't exist")
+
+
+class WrongArgumentsException(Exception):
+    def __init__(self, *arguments):
+        if arguments:
+            self.message = arguments[0]
+        else:
+            self.message = None
+
+    def __repr__(self):
+        return f'WrongArgumentException!!!  {self.message if self.message is not None else ""}'
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('input_path', type=str, help='path for input file.')
     parser.add_argument('output_path', type=str, help='path for input file.')
     parser.add_argument('neighbors_path', type=str, help='path for table file.')
     args = parser.parse_args()
+    arguments_validation(args)
     chips_grid = parse_file(args.input_path)
     processed_text = make_result_text(chips_grid, args.neighbors_path)
-    save_result_text(processed_text, args.output_path)
+    save_result_text(processed_text, args.output_path, args.input_path)
