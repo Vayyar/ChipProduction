@@ -116,3 +116,16 @@ class UnitTests(unittest.TestCase):
     def a_tester(self, neighbors_filename: str, input_text: str, expected_output_text: str):
         actual_output_text = self.calculate_output(neighbors_filename, input_text)
         self.assertEqual(actual_output_text, expected_output_text)
+
+    # HERE UNIT TESTS FOR CLEAR GARBAGE METHOD
+
+    def test_clear_garbage_empty_file(self):
+        garbage_text = """foooooo!?>>...XX11fooo!\n
+        foooooo!?>>...XX11fooo!\n\n\n\n
+        foooooo!?>>...XX11fooo!\n
+        foooooo!?>>...XX11fooo!\n
+        fo!?>>...XX11foo!\n
+        """
+        actual_result: str = skeleton.clear_from_garbage(garbage_text)
+        expected_result: str = ''
+        self.assertEqual(actual_result, expected_result)
