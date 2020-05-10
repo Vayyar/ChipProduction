@@ -71,6 +71,42 @@ class UnitTests(unittest.TestCase):
                                     "XXX"
         self.a_tester(neighbors_filename, input_text, expected_output_text)
 
+    # Takes 2 seconds
+    def test_no_less_xs(self):
+
+        neighbors_filename: str = 'neighbors_table.json'
+        # TODO put here smaller numbers for fast running
+        dim1, dim2 = 3, 3
+        for input_text in UnitTests.input_generator(dim1, dim2):
+            number_of_xs_input: int = input_text.count('X')
+            actual_result: str = self.calculate_output(neighbors_filename, input_text)
+            number_of_xs_output: int = actual_result.count('X')
+            self.assertTrue(number_of_xs_output >= number_of_xs_input)
+
+    @staticmethod
+    def input_generator(dimension_1: int, dimension_2: int):
+        translator = {0: 'X', 1: '.', 2: '1'}
+
+        def make_input_from_number(represent_number: int):
+            base: int = len(translator)
+            wafer_grid: List[List[str]] = list()
+            for row_index in range(dimension_1):
+                wafer_grid.append([])
+                for column_index in range(dimension_2):
+                    residue: int = represent_number % base
+                    chip_state = translator[residue]
+                    wafer_grid[-1].append(chip_state)
+                    represent_number = math.floor(represent_number / base)
+            wafer_rows = [''.join(wafer_grid_row) for wafer_grid_row in wafer_grid]
+            wafer_text = '\n'.join(wafer_rows)
+            return wafer_text
+
+        total_dimension = dimension_1 * dimension_2
+        max_representing_number = pow(len(translator), total_dimension)
+        for representing_number in range(max_representing_number):
+            result_wafer_text = make_input_from_number(representing_number)
+            yield result_wafer_text
+
     def calculate_output(self, neighbors_filename: str, input_text: str):
         path_for_neighbors_table: str = os.path.join(self.unit_tests_directory, neighbors_filename)
         input_grid: skeleton.ChipsGrid = skeleton.ChipsGrid(input_text)
