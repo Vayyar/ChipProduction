@@ -14,26 +14,26 @@ from pathlib import Path
 def parse_file(path_to_read_from):
     with open(path_to_read_from, 'r') as input_file:
         file_content = input_file.read()
-    chips_map_as_string = clear_from_garbage(file_content)
+    chips_map_as_string = clear_un_relevant_lines(file_content)
     chips_map_as_grid = ChipsGrid(chips_map_as_string)
     return chips_map_as_grid
 
 
-def clear_from_garbage(chips_map_as_str):
+def clear_un_relevant_lines(chips_map_as_str):
     chips_map_striped = chips_map_as_str.strip()
     file_lines_list = chips_map_striped.split('\n')
     file_lines_striped_list = [line.strip() for line in file_lines_list]
-    max_not_garbage_line_length = max(
-        [len(line) for line in file_lines_striped_list if is_not_garbage_characters(line)])
-    not_garbage_indexes_set = {index for index, line in enumerate(file_lines_striped_list)
-                               if is_not_garbage(line, max_not_garbage_line_length)}
-    max_lines_continuity_start, max_lines_continuity_end = find_longest_continuous_block_edges(not_garbage_indexes_set)
+    max_relevant_line_length = max(
+        [len(line) for line in file_lines_striped_list if is_contains_only_relevant_characters(line)])
+    relevant_indexes_set = {index for index, line in enumerate(file_lines_striped_list)
+                            if is_relevant(line, max_relevant_line_length)}
+    max_lines_continuity_start, max_lines_continuity_end = find_longest_continuous_block_edges(relevant_indexes_set)
     chips_map_part_list = file_lines_striped_list[max_lines_continuity_start: max_lines_continuity_end + 1]
     chips_map_part_string = '\n'.join(chips_map_part_list)
     return chips_map_part_string
 
 
-def is_not_garbage_characters(line):
+def is_contains_only_relevant_characters(line):
     """@pre: assume all line are striped
        check that all characters are of chips map
     """
@@ -43,9 +43,9 @@ def is_not_garbage_characters(line):
     return is_not_garbage_line
 
 
-def is_not_garbage(line, max_not_garbage_line_length):
+def is_relevant(line, max_not_garbage_line_length):
     """more severe check from 'is_not_garbage_characters' method"""
-    return is_not_garbage_characters(line) and len(line) == max_not_garbage_line_length and len(line) > 0
+    return is_contains_only_relevant_characters(line) and len(line) == max_not_garbage_line_length and len(line) > 0
 
 
 def find_longest_continuous_block_edges(set_of_ints):
