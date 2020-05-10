@@ -9,119 +9,119 @@ from scripts import skeleton
 class UnitTests(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.unit_tests_directory: str = '../unit_tests'
+        self.unit_tests_directory = '../unit_tests'
         self.neighbors_filename = 'neighbors_table.json'
 
     def test_middle(self):
-        input_text: str = "XXX\n" \
-                          "X1X\n" \
-                          "XXX"
-        expected_output_text: str = "XXX\n" \
-                                    "XYX\n" \
-                                    "XXX"
+        input_text = "XXX\n" \
+                     "X1X\n" \
+                     "XXX"
+        expected_output_text = "XXX\n" \
+                               "XYX\n" \
+                               "XXX"
         self.a_tester(self.neighbors_filename, input_text, expected_output_text)
 
     def test_all_ones(self):
-        input_text: str = "111\n" \
-                          "111\n" \
-                          "111"
-        expected_output_text: str = "111\n" \
-                                    "111\n" \
-                                    "111"
+        input_text = "111\n" \
+                     "111\n" \
+                     "111"
+        expected_output_text = "111\n" \
+                               "111\n" \
+                               "111"
         self.a_tester(self.neighbors_filename, input_text, expected_output_text)
 
     def test_dots(self):
-        input_text: str = "...\n" \
-                          "...\n" \
-                          "..."
-        expected_output_text: str = "...\n" \
-                                    "...\n" \
-                                    "..."
+        input_text = "...\n" \
+                     "...\n" \
+                     "..."
+        expected_output_text = "...\n" \
+                               "...\n" \
+                               "..."
         self.a_tester(self.neighbors_filename, input_text, expected_output_text)
 
     def test_lonely_one_and_many_dots_bottom(self):
-        input_text: str = "...\n" \
-                          "...\n" \
-                          "1.."
-        expected_output_text: str = "...\n" \
-                                    "...\n" \
-                                    "1.."
+        input_text = "...\n" \
+                     "...\n" \
+                     "1.."
+        expected_output_text = "...\n" \
+                               "...\n" \
+                               "1.."
         self.a_tester(self.neighbors_filename, input_text, expected_output_text)
 
     def test_lonely_one_and_many_dots_top(self):
-        input_text: str = "..1\n" \
-                          "...\n" \
-                          "..."
-        expected_output_text: str = "..1\n" \
-                                    "...\n" \
-                                    "..."
+        input_text = "..1\n" \
+                     "...\n" \
+                     "..."
+        expected_output_text = "..1\n" \
+                               "...\n" \
+                               "..."
         self.a_tester(self.neighbors_filename, input_text, expected_output_text)
 
     def test_all_x(self):
-        input_text: str = "XXX\n" \
-                          "XXX\n" \
-                          "XXX"
-        expected_output_text: str = "XXX\n" \
-                                    "XXX\n" \
-                                    "XXX"
+        input_text = "XXX\n" \
+                     "XXX\n" \
+                     "XXX"
+        expected_output_text = "XXX\n" \
+                               "XXX\n" \
+                               "XXX"
         self.a_tester(self.neighbors_filename, input_text, expected_output_text)
 
     def test_5_neighbors(self):
-        input_text: str = "X11\n" \
-                          "XX1\n" \
-                          "XXX"
-        expected_output_text: str = "XY1\n" \
-                                    "XXY\n" \
-                                    "XXX"
+        input_text = "X11\n" \
+                     "XX1\n" \
+                     "XXX"
+        expected_output_text = "XY1\n" \
+                               "XXY\n" \
+                               "XXX"
         self.a_tester(self.neighbors_filename, input_text, expected_output_text)
 
     def test_3_neighbors(self):
-        input_text: str = ".1X\n" \
-                          ".1X\n" \
-                          "..."
-        expected_output_text: str = ".YX\n" \
-                                    ".YX\n" \
-                                    "..."
+        input_text = ".1X\n" \
+                     ".1X\n" \
+                     "..."
+        expected_output_text = ".YX\n" \
+                               ".YX\n" \
+                               "..."
         self.a_tester(self.neighbors_filename, input_text, expected_output_text)
 
     def test_1_neighbor(self):
-        input_text: str = "...\n" \
-                          ".1X\n" \
-                          "..."
-        expected_output_text: str = "...\n" \
-                                    ".YX\n" \
-                                    "..."
+        input_text = "...\n" \
+                     ".1X\n" \
+                     "..."
+        expected_output_text = "...\n" \
+                               ".YX\n" \
+                               "..."
         self.a_tester(self.neighbors_filename, input_text, expected_output_text)
 
     def test_2_neighbors(self):
-        input_text: str = "..1\n" \
-                          ".1X\n" \
-                          "..."
-        expected_output_text: str = "..Y\n" \
-                                    ".YX\n" \
-                                    "..."
+        input_text = "..1\n" \
+                     ".1X\n" \
+                     "..."
+        expected_output_text = "..Y\n" \
+                               ".YX\n" \
+                               "..."
         self.a_tester(self.neighbors_filename, input_text, expected_output_text)
 
     def test_3_neighbors_under_threshold(self):
-        input_text: str = ".11\n" \
-                          ".1X\n" \
-                          "..."
-        expected_output_text: str = ".11\n" \
-                                    ".1X\n" \
-                                    "..."
+        input_text = ".11\n" \
+                     ".1X\n" \
+                     "..."
+        expected_output_text = ".11\n" \
+                               ".1X\n" \
+                               "..."
         self.a_tester(self.neighbors_filename, input_text, expected_output_text)
 
     # Takes 2 seconds
     def test_no_less_xs_no_more_1s_no_more_dots_no_other_chars(self):
 
-        neighbors_filename: str = 'neighbors_table.json'
+        neighbors_filename = 'neighbors_table.json'
         # TODO put here smaller numbers for fast running
         dim1, dim2 = 3, 3
         for input_text in UnitTests.input_generator(dim1, dim2):
             # no less xs
-            number_of_xs_input: int = input_text.count('X')
-            actual_result: str = self.calculate_output(neighbors_filename, input_text)
-            number_of_xs_output: int = actual_result.count('X')
+            number_of_xs_input = input_text.count('X')
+            actual_result = self.calculate_output(neighbors_filename, input_text)
+            number_of_xs_output = actual_result.count('X')
             self.assertTrue(number_of_xs_output >= number_of_xs_input)
             # no more 1s
             number_of_1s_input = input_text.count('1')
@@ -136,16 +136,16 @@ class UnitTests(unittest.TestCase):
             self.assertEqual(other_chars, '')
 
     @staticmethod
-    def input_generator(dimension_1: int, dimension_2: int):
+    def input_generator(dimension_1, dimension_2):
         translator = {0: 'X', 1: '.', 2: '1'}
 
-        def make_input_from_number(represent_number: int):
-            base: int = len(translator)
-            wafer_grid: List[List[str]] = list()
+        def make_input_from_number(represent_number):
+            base = len(translator)
+            wafer_grid = list()
             for row_index in range(dimension_1):
                 wafer_grid.append([])
                 for column_index in range(dimension_2):
-                    residue: int = represent_number % base
+                    residue = represent_number % base
                     chip_state = translator[residue]
                     wafer_grid[-1].append(chip_state)
                     represent_number = math.floor(represent_number / base)
@@ -169,13 +169,13 @@ class UnitTests(unittest.TestCase):
             output_text = output_file.read()
         self.a_tester(neighbors_filename, input_text, output_text)
 
-    def calculate_output(self, neighbors_filename: str, input_text: str):
-        path_for_neighbors_table: str = os.path.join(self.unit_tests_directory, neighbors_filename)
-        input_grid: skeleton.ChipsGrid = skeleton.ChipsGrid(input_text)
+    def calculate_output(self, neighbors_filename, input_text):
+        path_for_neighbors_table = os.path.join(self.unit_tests_directory, neighbors_filename)
+        input_grid = skeleton.ChipsGrid(input_text)
         actual_output_text = skeleton.make_result_text(input_grid, path_for_neighbors_table)
         return actual_output_text
 
-    def a_tester(self, neighbors_filename: str, input_text: str, expected_output_text: str):
+    def a_tester(self, neighbors_filename, input_text, expected_output_text):
         actual_output_text = self.calculate_output(neighbors_filename, input_text)
         self.assertEqual(actual_output_text, expected_output_text)
 
@@ -188,8 +188,8 @@ class UnitTests(unittest.TestCase):
         foooooo!?>>...XX11fooo!\n
         fo!?>>...XX11foo!\n
         """
-        actual_result: str = skeleton.clear_from_garbage(garbage_text)
-        expected_result: str = ''
+        actual_result = skeleton.clear_from_garbage(garbage_text)
+        expected_result = ''
         self.assertEqual(actual_result, expected_result)
 
     def test_clear_garbage_one_dot_file(self):
@@ -200,8 +200,8 @@ class UnitTests(unittest.TestCase):
         foooooo!?>>...XX11fooo!\n
         fo!?>>...XX11foo!\n
         """
-        actual_result: str = skeleton.clear_from_garbage(garbage_text)
-        expected_result: str = '.'
+        actual_result = skeleton.clear_from_garbage(garbage_text)
+        expected_result = '.'
         self.assertEqual(actual_result, expected_result)
 
     def test_clear_garbage_choose_the_bigger(self):
@@ -216,30 +216,30 @@ class UnitTests(unittest.TestCase):
         foooooo!?>>...XX11fooo!
         fo!?>>...XX11foo!\n
         """
-        actual_result: str = skeleton.clear_from_garbage(garbage_text)
-        expected_result: str = '...\n' \
-                               'X1X\n' \
-                               '111'
+        actual_result = skeleton.clear_from_garbage(garbage_text)
+        expected_result = '...\n' \
+                          'X1X\n' \
+                          '111'
         self.assertEqual(actual_result, expected_result)
 
     def test_chip_grid(self):
         rows_dimension, column_dimension = 5, 5
-        sample_size: int = 10_000
+        sample_size = 10_000
         for _, test_wafer in zip(range(sample_size), UnitTests.input_generator(rows_dimension, column_dimension)):
-            wafer_grid: skeleton.ChipsGrid = skeleton.ChipsGrid(test_wafer)
-            wafer_text_result: str = str(wafer_grid)
+            wafer_grid = skeleton.ChipsGrid(test_wafer)
+            wafer_text_result = str(wafer_grid)
             self.assertEqual(test_wafer, wafer_text_result)
 
     def test_find_longest_continuous_block_edges(self):
-        input_set: Set[int] = set(range(1000))
-        to_remove: Set[int] = {100, 500, 800}
-        input_set_with_gaps: Set[int] = input_set.difference(to_remove)
+        input_set = set(range(1000))
+        to_remove = {100, 500, 800}
+        input_set_with_gaps = input_set.difference(to_remove)
         actual_result = skeleton.find_longest_continuous_block_edges(input_set_with_gaps)
         expected_result = (101, 499)
         self.assertTupleEqual(actual_result, expected_result)
 
     def test_find_longest_continuous_block_edges_parametrized(self):
-        input_set: Set[int] = set(range(1000))
+        input_set = set(range(1000))
         for i in range(1, 500):
             input_set.remove(i)
             actual_result = skeleton.find_longest_continuous_block_edges(input_set)
@@ -249,9 +249,9 @@ class UnitTests(unittest.TestCase):
 
     def test_make_dict_of_neighbors_threshold(self):
         neighbors_filename = 'neighbors_table.json'
-        neighbors_path: str = os.path.join(self.unit_tests_directory, neighbors_filename)
-        result_dict: Dict[int, int] = skeleton.make_dict_of_neighbors_threshold(neighbors_path)
-        expected_dict: Dict[int, int] = {1: 1, 2: 1, 3: 2, 4: 3, 5: 3, 6: 4, 7: 5, 8: 6}
+        neighbors_path = os.path.join(self.unit_tests_directory, neighbors_filename)
+        result_dict = skeleton.make_dict_of_neighbors_threshold(neighbors_path)
+        expected_dict = {1: 1, 2: 1, 3: 2, 4: 3, 5: 3, 6: 4, 7: 5, 8: 6}
         self.assertDictEqual(result_dict, expected_dict)
 
 
