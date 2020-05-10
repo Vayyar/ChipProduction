@@ -142,7 +142,20 @@ class ChipsGrid:
         return number_of_x_neighbors
 
 
+class ChipState(enum.Enum):
+    Live = 1
+    Die = 2
+    DieByPrediction = 3
+    NotAChip = 4
+
+
 class Chip:
+    state_string_to_enum_translation_dict = {'X': ChipState.Die, '1': ChipState.Live,
+                                             '.': ChipState.NotAChip, 'Y': ChipState.DieByPrediction}
+
+    state_enum_to_string_translation_dict = {ChipState.Die: 'X', ChipState.Live: '1',
+                                             ChipState.NotAChip: '.', ChipState.DieByPrediction: 'Y'}
+
     def __init__(self, row, column, state):
         self.__row = row
         self.__column = column
@@ -150,9 +163,7 @@ class Chip:
 
     @staticmethod
     def translate_state_from_string_to_enum(state_as_str):
-        state_translation_dict = {'X': ChipState.Die, '1': ChipState.Live,
-                                  '.': ChipState.NotAChip, 'Y': ChipState.DieByPrediction}
-        chip_state = state_translation_dict[state_as_str]
+        chip_state = Chip.state_string_to_enum_translation_dict[state_as_str]
         return chip_state
 
     def __repr__(self):
@@ -160,9 +171,7 @@ class Chip:
 
     @staticmethod
     def translate_state_from_enum_to_string(chip_state_enum):
-        state_translation_dict = {ChipState.Die: 'X', ChipState.Live: '1',
-                                  ChipState.NotAChip: '.', ChipState.DieByPrediction: 'Y'}
-        state = state_translation_dict[chip_state_enum]
+        state = Chip.state_enum_to_string_translation_dict[chip_state_enum]
         return state
 
     @property
