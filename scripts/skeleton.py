@@ -33,6 +33,12 @@ def is_not_garbage_characters(line: str) -> bool:
     return is_not_garbage_line
 
 
+def is_not_garbage(line: str, max_not_garbage_line_length: int):
+    """more severe check from 'is_not_garbage_characters' method"""
+    return is_not_garbage_characters(line) and len(line) == max_not_garbage_line_length and len(line) > 0
+
+
+
 def make_result_text(wafer_grid, neighbors_path: str) -> str:
     pass
 
