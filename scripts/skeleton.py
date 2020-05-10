@@ -23,6 +23,16 @@ def clear_from_garbage(chips_map: str) -> str:
     return chips_map_part_string
 
 
+def is_not_garbage_characters(line: str) -> bool:
+    """@pre: assume all line are striped
+       check that all characters are of chips map
+    """
+    relevant_characters: Set[str] = {'X', '.', '1'}
+    is_all_relevant_characters: bool = all([char in relevant_characters for char in line])
+    is_not_garbage_line: bool = is_all_relevant_characters
+    return is_not_garbage_line
+
+
 def make_result_text(wafer_grid, neighbors_path: str) -> str:
     pass
 
