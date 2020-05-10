@@ -67,6 +67,12 @@ def find_edges_of_section_centered_at(number, set_of_ints, to_remove_from):
     return start_index, end_index
 
 
+class ChipsGrid:
+    def __init__(self, map_as_string: str):
+        self.__map_as_grid: List[List[Chip]] = ChipsGrid.make_chips_grid(map_as_string)
+
+
+
 class Chip:
     def __init__(self, row, column, state):
         self.__row = row
