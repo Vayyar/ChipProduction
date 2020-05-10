@@ -72,17 +72,29 @@ class UnitTests(unittest.TestCase):
         self.a_tester(neighbors_filename, input_text, expected_output_text)
 
     # Takes 2 seconds
-    def test_no_less_xs(self):
+    def test_no_less_xs_no_more_1s_no_more_dots_no_other_chars(self):
 
         neighbors_filename: str = 'neighbors_table.json'
         # TODO put here smaller numbers for fast running
         dim1, dim2 = 3, 3
         for input_text in UnitTests.input_generator(dim1, dim2):
+            # no less xs
             number_of_xs_input: int = input_text.count('X')
             actual_result: str = self.calculate_output(neighbors_filename, input_text)
             number_of_xs_output: int = actual_result.count('X')
             self.assertTrue(number_of_xs_output >= number_of_xs_input)
-
+            # no more 1s
+            number_of_1s_input = input_text.count('1')
+            number_of_1s_output = actual_result.count('1')
+            self.assertTrue(number_of_1s_input <= number_of_1s_output)
+            # no more dots
+            number_of_dots_input = input_text.count('.')
+            number_of_dots_output = actual_result.count('.')
+            self.assertTrue(number_of_dots_input <= number_of_dots_output)
+            # no other chars except Y
+            other_chars = actual_result.replace('.', '').replace('X', '').replace('1', '')
+            self.assertEqual(other_chars, '')
+            
     @staticmethod
     def input_generator(dimension_1: int, dimension_2: int):
         translator = {0: 'X', 1: '.', 2: '1'}
