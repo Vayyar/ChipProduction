@@ -66,6 +66,17 @@ class UnitTests(unittest.TestCase):
                                     "XXX"
         self.a_tester(self.neighbors_filename, input_text, expected_output_text)
 
+    def test_5_neighbors(self):
+        input_text: str = "X11\n" \
+                          "XX1\n" \
+                          "XXX"
+        expected_output_text: str = "XY1\n" \
+                                    "XXY\n" \
+                                    "XXX"
+        self.a_tester(self.neighbors_filename, input_text, expected_output_text)
+
+    
+
     # Takes 2 seconds
     def test_no_less_xs_no_more_1s_no_more_dots_no_other_chars(self):
 
@@ -89,7 +100,7 @@ class UnitTests(unittest.TestCase):
             # no other chars except Y
             other_chars = actual_result.replace('.', '').replace('X', '').replace('1', '')
             self.assertEqual(other_chars, '')
-            
+
     @staticmethod
     def input_generator(dimension_1: int, dimension_2: int):
         translator = {0: 'X', 1: '.', 2: '1'}
