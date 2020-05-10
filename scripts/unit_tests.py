@@ -142,3 +142,21 @@ class UnitTests(unittest.TestCase):
         expected_result: str = '.'
         self.assertEqual(actual_result, expected_result)
 
+    def test_clear_garbage_choose_the_bigger(self):
+        garbage_text = """foooooo!?>>...XX11fooo!
+        foooooo!?>>...XX11fooo!\n\n\n\n
+        ..
+        XX
+        ...
+        X1X
+        111
+        foooooo!?>>...XX11fooo!
+        foooooo!?>>...XX11fooo!
+        fo!?>>...XX11foo!\n
+        """
+        actual_result: str = skeleton.clear_from_garbage(garbage_text)
+        expected_result: str = '...\n' \
+                               'X1X\n' \
+                               '111'
+        self.assertEqual(actual_result, expected_result)
+
