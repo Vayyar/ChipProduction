@@ -80,6 +80,14 @@ def make_result_text(wafer_grid, neighbors_path: str) -> str:
 def save_result_text(result: str, output_path: str):
     pass
 
+
+class ChipState(enum.Enum):
+    Live = 1
+    Die = 2
+    DieByPrediction = 3
+    NotAChip = 4
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('input_path', type=str, help='path for input file.')
