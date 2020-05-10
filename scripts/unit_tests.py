@@ -107,6 +107,16 @@ class UnitTests(unittest.TestCase):
             result_wafer_text = make_input_from_number(representing_number)
             yield result_wafer_text
 
+    def test_on_file(self):
+        path_for_input_file = os.path.join(self.unit_tests_directory, 'unit_test_1_input.txt')
+        with open(path_for_input_file, 'r') as input_file:
+            input_text = input_file.read()
+        neighbors_filename = 'neighbors_table.json'
+        path_for_output_file = os.path.join(self.unit_tests_directory, 'unit_test_1_expected_output.txt')
+        with open(path_for_output_file, 'r') as output_file:
+            output_text = output_file.read()
+        self.a_tester(neighbors_filename, input_text, output_text)
+
     def calculate_output(self, neighbors_filename: str, input_text: str):
         path_for_neighbors_table: str = os.path.join(self.unit_tests_directory, neighbors_filename)
         input_grid: skeleton.ChipsGrid = skeleton.ChipsGrid(input_text)
