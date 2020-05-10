@@ -1,6 +1,7 @@
 import argparse
+import enum
 
-from typing import List, Set
+from typing import List, Set, Dict
 
 def parse_file(path_to_read_from: str):
     with open(path_to_read_from, 'r') as input_file:
@@ -71,6 +72,14 @@ class Chip:
         self.__row = row
         self.__column = column
         self.__state = Chip.translate_state_from_string_to_enum(state)
+
+    @staticmethod
+    def translate_state_from_string_to_enum(state: str):
+        state_translation_dict: Dict[str, ChipState] = {'X': ChipState.Die, '1': ChipState.Live,
+                                                        '.': ChipState.NotAChip, 'Y': ChipState.DieByPrediction}
+        chip_state: ChipState = state_translation_dict[state]
+        return chip_state
+
 
 
 
