@@ -118,12 +118,20 @@ class ChipsGrid:
                     current_neighbor: Chip = self.map_as_grid[result_row][result_column]
                     yield current_neighbor
 
-
     def exist_place(self, chip, delta_rows, delta_columns):
         result_row: int = chip.row + delta_rows
         result_column: int = chip.column + delta_columns
         is_existing_place: bool = 0 <= result_row < self.rows_number and 0 <= result_column < self.columns_number
         return is_existing_place
+
+    def number_of_neighbors(self, chip):
+        neighbors_number: int = sum(1 for _ in self.neighbors_iterator(chip))
+        return neighbors_number
+
+    def number_of_x_neighbors(self, chip):
+        number_of_x_neighbors = sum(1 for neighbor in self.neighbors_iterator(chip) if neighbor.state == ChipState.Die)
+        return number_of_x_neighbors
+
 
 
 class Chip:
