@@ -23,7 +23,7 @@ def clear_un_relevant_lines(chips_map_as_str):
     max_relevant_line_length = max(
         [len(line) for line in file_lines_striped_list if is_contains_only_relevant_characters(line)])
     relevant_indexes_set = {index for index, line in enumerate(file_lines_striped_list)
-                            if is_relevant(line, max_relevant_line_length)}
+                            if is_relevant_wafer_line(line, max_relevant_line_length)}
     max_lines_continuity_start, max_lines_continuity_end = find_longest_continuous_block_edges(relevant_indexes_set)
     chips_map_part_list = file_lines_striped_list[max_lines_continuity_start: max_lines_continuity_end + 1]
     chips_map_part_string = '\n'.join(chips_map_part_list)
@@ -43,7 +43,7 @@ def is_contains_only_relevant_characters(line):
     return is_not_garbage_line
 
 
-def is_relevant(line, max_not_garbage_line_length):
+def is_relevant_wafer_line(line, max_not_garbage_line_length):
     """
     more severe check from 'is_not_garbage_characters' method
     :param line: line of text
