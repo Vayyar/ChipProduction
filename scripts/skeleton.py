@@ -143,23 +143,23 @@ class ChipsGrid:
         return neighbors_number
 
     def number_of_x_neighbors(self, chip):
-        number_of_x_neighbors = sum(1 for neighbor in self.neighbors_iterator(chip) if neighbor.state == ChipState.Die)
+        number_of_x_neighbors = sum(1 for neighbor in self.neighbors_iterator(chip) if neighbor.state == ChipState.FAIL)
         return number_of_x_neighbors
 
 
 class ChipState(enum.Enum):
-    Live = 1
-    Die = 2
-    DieByPrediction = 3
-    NotAChip = 4
+    PASS = 1
+    FAIL = 2
+    FAIL_BY_PREDICTION = 3
+    NOT_EXISTS = 4
 
 
 class Chip:
-    state_string_to_enum_translation_dict = {'X': ChipState.Die, '1': ChipState.Live,
-                                             '.': ChipState.NotAChip, 'Y': ChipState.DieByPrediction}
+    state_string_to_enum_translation_dict = {'X': ChipState.FAIL, '1': ChipState.PASS,
+                                             '.': ChipState.NOT_EXISTS, 'Y': ChipState.FAIL_BY_PREDICTION}
 
-    state_enum_to_string_translation_dict = {ChipState.Die: 'X', ChipState.Live: '1',
-                                             ChipState.NotAChip: '.', ChipState.DieByPrediction: 'Y'}
+    state_enum_to_string_translation_dict = {ChipState.FAIL: 'X', ChipState.PASS: '1',
+                                             ChipState.NOT_EXISTS: '.', ChipState.FAIL_BY_PREDICTION: 'Y'}
 
     def __init__(self, row, column, state):
         self.__row = row
@@ -199,12 +199,12 @@ class Chip:
 def apply_algorithm_on_grid(wafer_grid, neighbors_path):
     neighbors_table = make_dict_of_neighbors_threshold(neighbors_path)
     for grid_cell in wafer_grid:
-        if grid_cell.state != ChipState.Live:
+        if grid_cell.state != ChipState.PASS:
             continue
         total_number_of_cell_neighbors = wafer_grid.number_of_neighbors(grid_cell)
         total_number_of_x_neighbors = wafer_grid.number_of_x_neighbors(grid_cell)
         threshold = neighbors_table[total_number_of_cell_neighbors]
-        new_state = ChipState.DieByPrediction if total_number_of_x_neighbors >= threshold else ChipState.Live
+        new_state = ChipState.FAIL_BY_PREDICTION if total_number_of_x_neighbors >= threshold else ChipState.PASS
         grid_cell.state = new_state
 
     return wafer_grid
