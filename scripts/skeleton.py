@@ -231,7 +231,7 @@ def choose_output_filename(input_path):
 
 def arguments_validation(arguments):
     for attribute, attribute_argument in vars(arguments).items():
-        if 'path' not in attribute:
+        if not isinstance(attribute_argument, Path):
             continue
         if not attribute_argument.exists():
             raise WrongArgumentsException(f"The path {attribute_argument} don't exist")
@@ -252,19 +252,12 @@ class WrongArgumentsException(Exception):
         return f'WrongArgumentException!!!  {self.message if self.message is not None else ""}'
 
 
-def process_args(arguments):
-    for attribute, attribute_argument in vars(arguments).items():
-        if 'path' in attribute:
-            setattr(arguments, attribute, Path(attribute_argument))
-
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('input_file_path', type=str, help='path for input file.')
-    parser.add_argument('output_dir_path', type=str, help='path for output directory.')
-    parser.add_argument('neighbors_file_path', type=str, help='path for table file.')
+    parser.add_argument('input_file_path', type=lambda p: Path(p), help='path for input file.')
+    parser.add_argument('output_dir_path', type=lambda p: Path(p), help='path for output directory.')
+    parser.add_argument('neighbors_file_path', type=lambda p: Path(p), help='path for table file.')
     args = parser.parse_args()
-    process_args(args)
     arguments_validation(args)
     chips_grid = parse_file(args.input_file_path)
     processed_grid = apply_algorithm_on_grid(chips_grid, args.neighbors_file_path)
