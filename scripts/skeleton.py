@@ -7,6 +7,7 @@ from string import Template
 
 
 def parse_file(path_to_read_from):
+def parse_text_file(path_to_read_from):
     with open(path_to_read_from, 'r') as input_file:
         file_content = input_file.read()
     chips_map_as_string, rest_of_text_as_template = separate_un_relevant_lines(file_content)
@@ -219,6 +220,7 @@ def make_dict_of_neighbors_threshold(neighbors_path):
 
 
 def save_result_text(result_grid, output_directory_path, input_path):
+def save_result_as_text(result_grid, output_directory_path, input_path):
     grid_text = str(result_grid)
     output_file_name = choose_output_filename(input_path)
     output_file_path = output_directory_path / output_file_name
@@ -260,7 +262,7 @@ if __name__ == '__main__':
     parser.add_argument('neighbors_file_path', type=lambda p: Path(p), help='path for table file.')
     args = parser.parse_args()
     arguments_validation(args)
-    chips_grid, rest_of_the_text_as_template = parse_file(args.input_file_path)
+    chips_grid, rest_of_the_text_as_template = parse_text_file(args.input_file_path)
     processed_grid = apply_algorithm_on_grid(chips_grid, args.neighbors_file_path)
     result_text = rest_of_the_text_as_template.substitute({'wafer': processed_grid})
-    save_result_text(result_text, args.output_dir_path, args.input_file_path)
+    save_result_as_text(result_text, args.output_dir_path, args.input_file_path)
