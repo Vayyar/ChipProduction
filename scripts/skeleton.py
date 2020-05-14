@@ -32,9 +32,10 @@ def clear_un_relevant_lines(chips_map_as_str):
 
 def is_contains_only_relevant_characters(line):
     """
-    assume all line are striped
-    :param line:
+    assume line are striped
+    :param line: a text line
     :return: True iff all characters are of chips map
+            i.e the line composed from 1 X . only.
     """
     relevant_characters_set = {'X', '.', '1', 'Y'}
     is_all_relevant_characters = all([char in relevant_characters_set for char in line])
