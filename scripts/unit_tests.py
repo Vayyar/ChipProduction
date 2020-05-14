@@ -8,7 +8,7 @@ from scripts import skeleton
 class UnitTests(unittest.TestCase):
 
     def setUp(self):
-        self.unit_tests_directory = Path('../unit_tests')
+        self.unit_tests_directory = Path(__file__).parent.absolute() / 'unit_tests'
         self.neighbors_filename = 'neighbors_table.json'
 
     def test_middle(self):
