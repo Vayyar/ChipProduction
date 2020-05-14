@@ -13,6 +13,10 @@ def parse_file(path_to_read_from):
 
 
 def clear_un_relevant_lines(chips_map_as_str):
+    """
+    :param chips_map_as_str: content of a wafer file as .txt
+    :return: only the wafer grid text that contains . X 1 only.
+    """
     chips_map_striped = chips_map_as_str.strip()
     file_lines_list = chips_map_striped.split('\n')
     file_lines_striped_list = [line.strip() for line in file_lines_list]
