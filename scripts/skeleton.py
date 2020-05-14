@@ -4,12 +4,6 @@ import json
 from pathlib import Path
 
 
-# TODO I got this error when trying Gooey and I doesn't know what to do
-# wx._core.wxAssertionError: C++ assertion "!(flags & wxALIGN_CENTRE_HORIZONTAL)"
-# failed at ..\..\src\common\sizer.cpp(2106) in wxBoxSizer::DoInsert():
-# Horizontal alignment flags are ignored in horizontal sizers
-
-
 def parse_file(path_to_read_from):
     with open(path_to_read_from, 'r') as input_file:
         file_content = input_file.read()
