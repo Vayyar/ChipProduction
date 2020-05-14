@@ -24,10 +24,11 @@ def separate_un_relevant_lines(chips_map_as_str):
     file_lines_striped_list = [line.strip() for line in file_lines_list]
     max_relevant_line_length = max(
         [len(line) for line in file_lines_striped_list if is_contains_only_relevant_characters(line)])
+    most_common_relevant_line_length = find_most_common_relevant_line_length(file_lines_striped_list)
     relevant_indexes_set = {index for index, line in enumerate(file_lines_striped_list)
-                            if is_relevant_wafer_line(line, max_relevant_line_length)}
-    max_lines_continuity_start, max_lines_continuity_end = find_longest_continuous_block_edges(relevant_indexes_set)
-    chips_map_part_list = file_lines_striped_list[max_lines_continuity_start: max_lines_continuity_end + 1]
+                            if is_relevant_wafer_line(line, most_common_relevant_line_length)}
+    handle_two_wafers_case(relevant_indexes_set)
+    wafer_start_index, wafer_end_index = min(relevant_indexes_set), max(relevant_indexes_set)
     chips_map_part_list = file_lines_striped_list[wafer_start_index: wafer_end_index + 1]
     chips_map_part_string = '\n'.join(chips_map_part_list)
     return chips_map_part_string
@@ -36,6 +37,18 @@ def separate_un_relevant_lines(chips_map_as_str):
     return chips_map_part_string, rest_of_text_as_template
 
 
+def handle_two_wafers_case(relevant_indexes_set):
+    if is_not_continuous_set(relevant_indexes_set):
+        raise TwoWafersException('There are 2 wafers in the same file with same length')
+def is_not_continuous_set(int_set):
+    is_continuous = max(int_set) - min(int_set) + 1 != len(int_set)
+    return is_continuous
+
+
+def find_most_common_relevant_line_length(file_lines_list):
+    lengths_list = [len(line) for line in file_lines_list if is_contains_only_relevant_characters(line)]
+    counters = Counter(lengths_list)
+    return counters.most_common()[0][0]
 def is_contains_only_relevant_characters(line):
     """
     assume line are striped
