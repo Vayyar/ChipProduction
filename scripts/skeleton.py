@@ -1,18 +1,20 @@
 import argparse
 import enum
 import json
+from collections import Counter
 from pathlib import Path
+from string import Template
 
 
 def parse_file(path_to_read_from):
     with open(path_to_read_from, 'r') as input_file:
         file_content = input_file.read()
-    chips_map_as_string = clear_un_relevant_lines(file_content)
+    chips_map_as_string, rest_of_text_as_template = separate_un_relevant_lines(file_content)
     chips_map_as_grid = ChipsGrid(chips_map_as_string)
-    return chips_map_as_grid
+    return chips_map_as_grid, rest_of_text_as_template
 
 
-def clear_un_relevant_lines(chips_map_as_str):
+def separate_un_relevant_lines(chips_map_as_str):
     """
     :param chips_map_as_str: content of a wafer file as .txt
     :return: only the wafer grid text that contains . X 1 only.
@@ -26,8 +28,12 @@ def clear_un_relevant_lines(chips_map_as_str):
                             if is_relevant_wafer_line(line, max_relevant_line_length)}
     max_lines_continuity_start, max_lines_continuity_end = find_longest_continuous_block_edges(relevant_indexes_set)
     chips_map_part_list = file_lines_striped_list[max_lines_continuity_start: max_lines_continuity_end + 1]
+    chips_map_part_list = file_lines_striped_list[wafer_start_index: wafer_end_index + 1]
     chips_map_part_string = '\n'.join(chips_map_part_list)
     return chips_map_part_string
+    rest_of_the_text = chips_map_as_str.replace(chips_map_part_string, '$wafer')
+    rest_of_text_as_template = Template(rest_of_the_text)
+    return chips_map_part_string, rest_of_text_as_template
 
 
 def is_contains_only_relevant_characters(line):
@@ -259,6 +265,7 @@ if __name__ == '__main__':
     parser.add_argument('neighbors_file_path', type=lambda p: Path(p), help='path for table file.')
     args = parser.parse_args()
     arguments_validation(args)
-    chips_grid = parse_file(args.input_file_path)
+    chips_grid, rest_of_the_text_as_template = parse_file(args.input_file_path)
     processed_grid = apply_algorithm_on_grid(chips_grid, args.neighbors_file_path)
-    save_result_text(processed_grid, args.output_dir_path, args.input_file_path)
+    result_text = rest_of_the_text_as_template.substitute({'wafer': processed_grid})
+    save_result_text(result_text, args.output_dir_path, args.input_file_path)
