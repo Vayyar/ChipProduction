@@ -1,15 +1,14 @@
 import math
-import os
 import unittest
-from typing import List, Set, Dict
+from pathlib import Path
 
 from scripts import skeleton
 
 
 class UnitTests(unittest.TestCase):
 
-    def setUp(self) -> None:
-        self.unit_tests_directory = '../unit_tests'
+    def setUp(self):
+        self.unit_tests_directory = Path('../unit_tests')
         self.neighbors_filename = 'neighbors_table.json'
 
     def test_middle(self):
@@ -160,17 +159,17 @@ class UnitTests(unittest.TestCase):
             yield result_wafer_text
 
     def test_on_file(self):
-        path_for_input_file = os.path.join(self.unit_tests_directory, 'unit_test_1_input.txt')
+        path_for_input_file = self.unit_tests_directory / 'unit_test_1_input.txt'
         with open(path_for_input_file, 'r') as input_file:
             input_text = input_file.read()
         neighbors_filename = 'neighbors_table.json'
-        path_for_output_file = os.path.join(self.unit_tests_directory, 'unit_test_1_expected_output.txt')
+        path_for_output_file = self.unit_tests_directory / 'unit_test_1_expected_output.txt'
         with open(path_for_output_file, 'r') as output_file:
             output_text = output_file.read()
         self.a_tester(neighbors_filename, input_text, output_text)
 
     def calculate_output(self, neighbors_filename, input_text):
-        path_for_neighbors_table = os.path.join(self.unit_tests_directory, neighbors_filename)
+        path_for_neighbors_table = self.unit_tests_directory / neighbors_filename
         input_grid = skeleton.ChipsGrid(input_text)
         actual_output_text = skeleton.make_result_text(input_grid, path_for_neighbors_table)
         return actual_output_text
@@ -249,7 +248,7 @@ class UnitTests(unittest.TestCase):
 
     def test_make_dict_of_neighbors_threshold(self):
         neighbors_filename = 'neighbors_table.json'
-        neighbors_path = os.path.join(self.unit_tests_directory, neighbors_filename)
+        neighbors_path = self.unit_tests_directory / neighbors_filename
         result_dict = skeleton.make_dict_of_neighbors_threshold(neighbors_path)
         expected_dict = {1: 1, 2: 1, 3: 2, 4: 3, 5: 3, 6: 4, 7: 5, 8: 6}
         self.assertDictEqual(result_dict, expected_dict)
