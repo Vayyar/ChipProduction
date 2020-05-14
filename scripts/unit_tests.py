@@ -180,31 +180,31 @@ class UnitTests(unittest.TestCase):
 
     # HERE UNIT TESTS FOR CLEAR GARBAGE METHOD
 
-    def test_clear_garbage_empty_file(self):
-        garbage_text = """foooooo!?>>...XX11fooo!\n
+    def test_separate_un_relevant_lines_empty_file(self):
+        un_relevant_text = """foooooo!?>>...XX11fooo!\n
         foooooo!?>>...XX11fooo!\n\n\n\n
         foooooo!?>>...XX11fooo!\n
         foooooo!?>>...XX11fooo!\n
         fo!?>>...XX11foo!\n
         """
-        actual_result = skeleton.clear_from_garbage(garbage_text)
+        actual_result = skeleton.separate_un_relevant_lines(un_relevant_text)[0]
         expected_result = ''
         self.assertEqual(actual_result, expected_result)
 
-    def test_clear_garbage_one_dot_file(self):
-        garbage_text = """foooooo!?>>...XX11fooo!\n
+    def test_separate_un_relevant_lines_one_dot_file(self):
+        un_relevant_text = """foooooo!?>>...XX11fooo!\n
         foooooo!?>>...XX11fooo!\n\n\n\n
         .\n
         foooooo!?>>...XX11fooo!\n
         foooooo!?>>...XX11fooo!\n
         fo!?>>...XX11foo!\n
         """
-        actual_result = skeleton.clear_from_garbage(garbage_text)
+        actual_result = skeleton.separate_un_relevant_lines(un_relevant_text)
         expected_result = '.'
         self.assertEqual(actual_result, expected_result)
 
-    def test_clear_garbage_choose_the_bigger(self):
-        garbage_text = """foooooo!?>>...XX11fooo!
+    def test_separate_un_relevant_lines_choose_the_bigger(self):
+        un_relevant_text = """foooooo!?>>...XX11fooo!
         foooooo!?>>...XX11fooo!\n\n\n\n
         ..
         XX
@@ -215,7 +215,7 @@ class UnitTests(unittest.TestCase):
         foooooo!?>>...XX11fooo!
         fo!?>>...XX11foo!\n
         """
-        actual_result = skeleton.clear_from_garbage(garbage_text)
+        actual_result = skeleton.separate_un_relevant_lines(un_relevant_text)
         expected_result = '...\n' \
                           'X1X\n' \
                           '111'
