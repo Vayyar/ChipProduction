@@ -44,7 +44,12 @@ def is_contains_only_relevant_characters(line):
 
 
 def is_relevant(line, max_not_garbage_line_length):
-    """more severe check from 'is_not_garbage_characters' method"""
+    """
+    more severe check from 'is_not_garbage_characters' method
+    :param line: line of text
+    :param max_not_garbage_line_length: the expected len from not garbage line.
+    :return: True iff line is part of the wafer grid.
+    """
     return is_contains_only_relevant_characters(line) and len(line) == max_not_garbage_line_length and len(line) > 0
 
 
