@@ -22,8 +22,6 @@ def separate_un_relevant_lines(chips_map_as_str):
     chips_map_striped = chips_map_as_str.strip()
     file_lines_list = chips_map_striped.split('\n')
     file_lines_striped_list = [line.strip() for line in file_lines_list]
-    max_relevant_line_length = max(
-        [len(line) for line in file_lines_striped_list if is_contains_only_relevant_characters(line)])
     most_common_relevant_line_length = find_most_common_relevant_line_length(file_lines_striped_list)
     relevant_indexes_set = {index for index, line in enumerate(file_lines_striped_list)
                             if is_relevant_wafer_line(line, most_common_relevant_line_length)}
@@ -31,7 +29,6 @@ def separate_un_relevant_lines(chips_map_as_str):
     wafer_start_index, wafer_end_index = min(relevant_indexes_set), max(relevant_indexes_set)
     chips_map_part_list = file_lines_striped_list[wafer_start_index: wafer_end_index + 1]
     chips_map_part_string = '\n'.join(chips_map_part_list)
-    return chips_map_part_string
     rest_of_the_text = chips_map_as_str.replace(chips_map_part_string, '$wafer')
     rest_of_text_as_template = Template(rest_of_the_text)
     return chips_map_part_string, rest_of_text_as_template
@@ -74,42 +71,15 @@ def is_contains_only_relevant_characters(line):
     return is_not_garbage_line
 
 
-def is_relevant_wafer_line(line, max_not_garbage_line_length):
+def is_relevant_wafer_line(line, most_common_not_garbage_line_length):
     """
     more severe check from 'is_not_garbage_characters' method
     :param line: line of text
-    :param max_not_garbage_line_length: the expected len from not garbage line.
+    :param most_common_not_garbage_line_length: the expected len from not garbage line.
     :return: True iff line is part of the wafer grid.
     """
-    return is_contains_only_relevant_characters(line) and len(line) == max_not_garbage_line_length and len(line) > 0
-
-
-def find_longest_continuous_block_edges(set_of_ints):
-    max_section_start, max_section_end = -1, -2
-    set_of_ints_copy = set_of_ints.copy()
-    for number in set_of_ints:
-        if number not in set_of_ints_copy:
-            continue
-        current_section_start, current_section_end = \
-            find_edges_of_section_centered_at(number, set_of_ints, set_of_ints_copy)
-        if current_section_end - current_section_start > max_section_end - max_section_start:
-            max_section_start, max_section_end = current_section_start, current_section_end
-    return max_section_start, max_section_end
-
-
-def find_edges_of_section_centered_at(number, set_of_ints, to_remove_from):
-    start_index = number - 1
-    end_index = number + 1
-    while start_index in set_of_ints:
-        to_remove_from.remove(start_index)
-        start_index -= 1
-    start_index += 1
-
-    while end_index in set_of_ints:
-        to_remove_from.remove(end_index)
-        end_index += 1
-    end_index -= 1
-    return start_index, end_index
+    return all([is_contains_only_relevant_characters(line), len(line) == most_common_not_garbage_line_length,
+                len(line) > 0])
 
 
 class ChipsGrid:
