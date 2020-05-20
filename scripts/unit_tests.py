@@ -239,7 +239,7 @@ class UnitTests(unittest.TestCase):
         neighbors_filename = 'neighbors_table.json'
         neighbors_path = self.unit_tests_directory / neighbors_filename
         result_dict = skeleton.make_dict_of_neighbors_threshold(neighbors_path)
-        expected_dict = {1: 1, 2: 1, 3: 2, 4: 3, 5: 3, 6: 4, 7: 5, 8: 6}
+        expected_dict = {0: 1, 1: 1, 2: 1, 3: 2, 4: 3, 5: 3, 6: 4, 7: 5, 8: 6}
         self.assertDictEqual(result_dict, expected_dict)
 
 
