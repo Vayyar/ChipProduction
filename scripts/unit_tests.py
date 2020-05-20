@@ -125,13 +125,14 @@ class UnitTests(unittest.TestCase):
             # no more 1s
             number_of_1s_input = input_text.count('1')
             number_of_1s_output = actual_result.count('1')
-            self.assertTrue(number_of_1s_input <= number_of_1s_output)
+            self.assertTrue(number_of_1s_output <= number_of_1s_input)
             # no more dots
             number_of_dots_input = input_text.count('.')
             number_of_dots_output = actual_result.count('.')
             self.assertTrue(number_of_dots_input <= number_of_dots_output)
             # no other chars except Y
-            other_chars = actual_result.replace('.', '').replace('X', '').replace('1', '')
+            other_chars = actual_result.replace('.', '').replace('X', '').replace('1', '').replace('\n', '').\
+                replace('Y', '')
             self.assertEqual(other_chars, '')
 
     @staticmethod
