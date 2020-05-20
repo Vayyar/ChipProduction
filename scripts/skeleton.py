@@ -41,15 +41,15 @@ def separate_un_relevant_lines(chips_map_as_str):
 
 def handle_two_wafers_case(relevant_indexes_set):
     if is_not_continuous_set(relevant_indexes_set):
-        raise TwoWafersException('There are 2 wafers in the same file with same length')
+        raise BadWaferFileException('There are 2 wafers in the same file with same length')
 
 
-class TwoWafersException(Exception):
+class BadWaferFileException(Exception):
     def __init__(self, message):
         self.message = message
 
     def __repr__(self):
-        return f'TwoWafersException!!!  {self.message}'
+        return f'BadWaferFileException!!!  {self.message}'
 
 
 def is_not_continuous_set(int_set):
@@ -58,7 +58,8 @@ def is_not_continuous_set(int_set):
 
 
 def find_most_common_relevant_line_length(file_lines_list):
-    lengths_list = [len(line) for line in file_lines_list if is_contains_only_relevant_characters(line)]
+    if len(lengths_list) == 0:
+        raise BadWaferFileException("The file contains no wafers!!!")
     counters = Counter(lengths_list)
     return counters.most_common()[0][0]
 
