@@ -188,10 +188,11 @@ class UnitTests(unittest.TestCase):
         foooooo!?>>...XX11fooo!\n
         fo!?>>...XX11foo!\n
         """
-        actual_result = skeleton.separate_un_relevant_lines(un_relevant_text)[0]
-        expected_result = ''
-        self.assertEqual(actual_result, expected_result)
+        try:
             _, __ = skeleton.separate_un_relevant_lines(un_relevant_text)
+            self.assertTrue(False)
+        except Exception as e:
+            self.assertEqual(type(e), skeleton.BadWaferFileException)
 
     def test_separate_un_relevant_lines_one_dot_file(self):
         un_relevant_text = """foooooo!?>>...XX11fooo!\n
