@@ -7,6 +7,7 @@ from string import Template
 
 
 def parse_file(path_to_read_from):
+    pass
 def parse_text_file(path_to_read_from):
     with open(path_to_read_from, 'r') as input_file:
         file_content = input_file.read()
@@ -119,6 +120,9 @@ class ChipsGrid:
         return representation
 
     def __iter__(self):
+        """
+        :return: Chips instances ordered by rows.
+        """
         for chips_row in self.map_as_grid:
             for chip in chips_row:
                 yield chip
