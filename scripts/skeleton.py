@@ -1,4 +1,5 @@
 import argparse
+import copy
 import enum
 import json
 from collections import Counter
@@ -8,6 +9,8 @@ from string import Template
 
 def parse_file(path_to_read_from):
     pass
+
+
 def parse_text_file(path_to_read_from):
     with open(path_to_read_from, 'r') as input_file:
         file_content = input_file.read()
@@ -98,6 +101,9 @@ class ChipsGrid:
                 current_chip = Chip(row_index, column_index, chip_state)
                 chips_grid_obj[-1].append(current_chip)
         return chips_grid_obj
+
+    def __deepcopy__(self, memodict={}):
+        return ChipsGrid(str(self))
 
     @property
     def map_as_grid(self):
@@ -203,17 +209,18 @@ class Chip:
 
 
 def apply_algorithm_on_grid(wafer_grid, neighbors_path):
+    wafer_grid_copy = copy.deepcopy(wafer_grid)
     neighbors_table = make_dict_of_neighbors_threshold(neighbors_path)
-    for grid_cell in wafer_grid:
+    for grid_cell in wafer_grid_copy:
         if grid_cell.state != ChipState.PASS:
             continue
-        total_number_of_cell_neighbors = wafer_grid.number_of_neighbors(grid_cell)
-        total_number_of_x_neighbors = wafer_grid.number_of_x_neighbors(grid_cell)
+        total_number_of_cell_neighbors = wafer_grid_copy.number_of_neighbors(grid_cell)
+        total_number_of_x_neighbors = wafer_grid_copy.number_of_x_neighbors(grid_cell)
         threshold = neighbors_table[total_number_of_cell_neighbors]
         new_state = ChipState.FAIL_BY_PREDICTION if total_number_of_x_neighbors >= threshold else ChipState.PASS
         grid_cell.state = new_state
 
-    return wafer_grid
+    return wafer_grid_copy
 
 
 def make_dict_of_neighbors_threshold(neighbors_path):
@@ -224,6 +231,9 @@ def make_dict_of_neighbors_threshold(neighbors_path):
 
 
 def save_result_text(result_grid, output_directory_path, input_path):
+    pass
+
+
 def save_result_as_text(result_grid, output_directory_path, input_path):
     grid_text = str(result_grid)
     output_file_name = choose_output_filename(input_path)
