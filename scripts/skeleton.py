@@ -58,6 +58,8 @@ def is_not_continuous_set(int_set):
 
 
 def find_most_common_relevant_line_length(file_lines_list):
+    lengths_list = [len(line) for line in file_lines_list if
+                    is_contains_only_relevant_characters(line) and len(line) != 0]
     if len(lengths_list) == 0:
         raise BadWaferFileException("The file contains no wafers!!!")
     counters = Counter(lengths_list)
