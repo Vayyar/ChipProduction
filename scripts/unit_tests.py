@@ -210,17 +210,16 @@ class UnitTests(unittest.TestCase):
 
     def test_separate_un_relevant_lines_choose_the_bigger(self):
         un_relevant_text = """foooooo!?>>...XX11fooo!
-        foooooo!?>>...XX11fooo!\n\n\n\n
-        ..
-        XX
-        ...
-        X1X
-        111
-        foooooo!?>>...XX11fooo!
-        foooooo!?>>...XX11fooo!
-        fo!?>>...XX11foo!\n
-        """
-        actual_result = skeleton.separate_un_relevant_lines(un_relevant_text)
+            foooooo!?>>...XX11fooo!\n\n\n\n
+            ..
+            XX
+            ...
+            X1X
+            111
+            foooooo!?>>...XX11fooo!
+            foooooo!?>>...XX11fooo!
+            fo!?>>...XX11foo!\n
+            """
         actual_result, _ = skeleton.separate_un_relevant_lines(un_relevant_text)
         expected_result = '...\n' \
                           'X1X\n' \
