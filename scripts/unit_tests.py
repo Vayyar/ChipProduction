@@ -171,7 +171,8 @@ class UnitTests(unittest.TestCase):
     def calculate_output(self, neighbors_filename, input_text):
         path_for_neighbors_table = self.unit_tests_directory / neighbors_filename
         input_grid = skeleton.ChipsGrid(input_text)
-        actual_output_text = skeleton.make_result_text(input_grid, path_for_neighbors_table)
+        actual_output_as_greed = skeleton.apply_algorithm_on_grid(input_grid, path_for_neighbors_table)
+        actual_output_text = str(actual_output_as_greed)
         return actual_output_text
 
     def a_tester(self, neighbors_filename, input_text, expected_output_text):
@@ -190,6 +191,7 @@ class UnitTests(unittest.TestCase):
         actual_result = skeleton.separate_un_relevant_lines(un_relevant_text)[0]
         expected_result = ''
         self.assertEqual(actual_result, expected_result)
+            _, __ = skeleton.separate_un_relevant_lines(un_relevant_text)
 
     def test_separate_un_relevant_lines_one_dot_file(self):
         un_relevant_text = """foooooo!?>>...XX11fooo!\n
@@ -199,7 +201,8 @@ class UnitTests(unittest.TestCase):
         foooooo!?>>...XX11fooo!\n
         fo!?>>...XX11foo!\n
         """
-        actual_result = skeleton.separate_un_relevant_lines(un_relevant_text)
+
+        actual_result, _ = skeleton.separate_un_relevant_lines(un_relevant_text)
         expected_result = '.'
         self.assertEqual(actual_result, expected_result)
 
@@ -216,6 +219,7 @@ class UnitTests(unittest.TestCase):
         fo!?>>...XX11foo!\n
         """
         actual_result = skeleton.separate_un_relevant_lines(un_relevant_text)
+        actual_result, _ = skeleton.separate_un_relevant_lines(un_relevant_text)
         expected_result = '...\n' \
                           'X1X\n' \
                           '111'
