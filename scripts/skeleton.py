@@ -152,7 +152,8 @@ class ChipsGrid:
         return is_existing_place
 
     def number_of_neighbors(self, chip):
-        neighbors_number = sum(1 for _ in self.neighbors_iterator(chip))
+        neighbors_number = sum(1 for neighbor in self.neighbors_iterator(chip)
+                               if neighbor.state != ChipState.NOT_EXISTS)
         return neighbors_number
 
     def number_of_x_neighbors(self, chip):
