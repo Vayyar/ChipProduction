@@ -234,23 +234,6 @@ class UnitTests(unittest.TestCase):
             wafer_text_result = str(wafer_grid)
             self.assertEqual(test_wafer, wafer_text_result)
 
-    def test_find_longest_continuous_block_edges(self):
-        input_set = set(range(1000))
-        to_remove = {100, 500, 800}
-        input_set_with_gaps = input_set.difference(to_remove)
-        actual_result = skeleton.find_longest_continuous_block_edges(input_set_with_gaps)
-        expected_result = (101, 499)
-        self.assertTupleEqual(actual_result, expected_result)
-
-    def test_find_longest_continuous_block_edges_parametrized(self):
-        input_set = set(range(1000))
-        for i in range(1, 500):
-            input_set.remove(i)
-            actual_result = skeleton.find_longest_continuous_block_edges(input_set)
-            expected_result = (i + 1, 999)
-            self.assertTupleEqual(actual_result, expected_result)
-            input_set.add(i)
-
     def test_make_dict_of_neighbors_threshold(self):
         neighbors_filename = 'neighbors_table.json'
         neighbors_path = self.unit_tests_directory / neighbors_filename
