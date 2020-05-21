@@ -7,6 +7,9 @@ from string import Template
 
 
 def parse_file(path_to_read_from):
+    type_of_file = path_to_read_from.suffix
+    methods_dict = {'.txt': parse_text_file, '.stdf': parse_stdf_file}
+    return methods_dict[type_of_file](path_to_read_from)
 def parse_text_file(path_to_read_from):
     with open(path_to_read_from, 'r') as input_file:
         file_content = input_file.read()
