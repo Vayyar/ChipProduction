@@ -23,6 +23,8 @@ def parse_text_file(path_to_read_from):
 
 def separate_un_relevant_lines(chips_map_as_str):
     """
+    Get content of text file and separate it into the wafer
+    part and the rest of the text.
     :param chips_map_as_str: content of a wafer file as .txt
     :return: only the wafer grid text that contains . X 1 only.
     """
@@ -74,6 +76,7 @@ def find_most_common_relevant_line_length(file_lines_list):
 
 def is_contains_only_relevant_characters(line):
     """
+    Checks if it possible that line is part of wafer.
     assume line are striped
     :param line: a text line
     :return: True iff all characters are of chips map
@@ -87,6 +90,7 @@ def is_contains_only_relevant_characters(line):
 
 def is_relevant_wafer_line(line, most_common_not_garbage_line_length):
     """
+    Make sure that line is indeed part of THE wafer in this file.
     more severe check from 'is_not_garbage_characters' method
     :param line: line of text
     :param most_common_not_garbage_line_length: the expected len from not garbage line.
@@ -142,6 +146,7 @@ class ChipsGrid:
 
     def __iter__(self):
         """
+        Iterate over all Chips in this grid.
         :return: Chips instances ordered by rows.
         """
         for chips_row in self.map_as_grid:
