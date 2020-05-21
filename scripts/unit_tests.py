@@ -1,7 +1,7 @@
 import math
 import unittest
-import logging
 from pathlib import Path
+from random import choice
 
 from scripts import skeleton
 
@@ -11,6 +11,7 @@ class UnitTests(unittest.TestCase):
     def setUp(self):
         self.unit_tests_directory = Path(__file__).parents[1].absolute() / 'unit_tests'
         self.neighbors_filename = 'neighbors_table.json'
+        self.wafer_initial_states = ['X', '1', '.']
 
     def test_middle(self):
         input_text = "XXX\n" \
@@ -113,31 +114,57 @@ class UnitTests(unittest.TestCase):
 
     # Takes 2 seconds
     def test_same_amount_xs_no_more_1s_same_amount_of_dots_no_other_chars(self):
-
-        neighbors_filename = 'neighbors_table.json'
         # TODO put here smaller numbers for fast running
         dim1, dim2 = 3, 3
         for input_text in UnitTests.input_generator(dim1, dim2):
-            # no less xs
-            number_of_xs_input = input_text.count('X')
-            actual_result = self.calculate_output(neighbors_filename, input_text)
-            number_of_xs_output = actual_result.count('X')
-            self.assertTrue(number_of_xs_output == number_of_xs_input)
-            # no more 1s
-            number_of_1s_input = input_text.count('1')
-            number_of_1s_output = actual_result.count('1')
-            self.assertTrue(number_of_1s_output <= number_of_1s_input)
-            # (#Y + #1) in output == (#1) in input.
-            number_of_ys_output = actual_result.count('Y')
-            self.assertTrue(number_of_1s_output + number_of_ys_output == number_of_1s_input)
-            # no more dots
-            number_of_dots_input = input_text.count('.')
-            number_of_dots_output = actual_result.count('.')
-            self.assertTrue(number_of_dots_input == number_of_dots_output)
-            # no other chars except Y
-            other_chars = actual_result.replace('.', '').replace('X', '').replace('1', '').replace('\n', '').\
-                replace('Y', '')
-            self.assertEqual(other_chars, '')
+            self.assert_that_algorithm_return_making_sense_result(input_text)
+
+    def test_amount_of_x_y_1_dots_in_result_on_random_samples(self):
+        dimensions = [(1, 1), (3, 5), (37, 25), (44, 12), (15, 1)]
+        sample_size = 50
+        for dimension in dimensions:
+            self.check_algorithm_on_samples(dimension, sample_size)
+
+    def check_algorithm_on_samples(self, dimension, sample_size):
+        for random_wafer in self.get_random_sample_points(dimension, sample_size):
+            self.assert_that_algorithm_return_making_sense_result(random_wafer)
+
+    def get_random_sample_points(self, dimension, sample_size):
+        for _ in range(sample_size):
+            yield self.get_random_sample_point(dimension)
+
+    def get_random_sample_point(self, dimension):
+        x_dimension, y_dimension = dimension
+        states_list = [[self.get_random_wafer_state() for _ in range(x_dimension)] for _ in range(y_dimension)]
+        lines_list = [''.join(states_row) for states_row in states_list]
+        wafer_as_str = '\n'.join(lines_list)
+        return wafer_as_str
+
+    def get_random_wafer_state(self):
+        return choice(self.wafer_initial_states)
+
+    def assert_that_algorithm_return_making_sense_result(self, input_text):
+        neighbors_filename = 'neighbors_table.json'
+        # no less xs
+        number_of_xs_input = input_text.count('X')
+        actual_result = self.calculate_output(neighbors_filename, input_text)
+        number_of_xs_output = actual_result.count('X')
+        self.assertTrue(number_of_xs_output == number_of_xs_input)
+        # no more 1s
+        number_of_1s_input = input_text.count('1')
+        number_of_1s_output = actual_result.count('1')
+        self.assertTrue(number_of_1s_output <= number_of_1s_input)
+        # (#Y + #1) in output == (#1) in input.
+        number_of_ys_output = actual_result.count('Y')
+        self.assertTrue(number_of_1s_output + number_of_ys_output == number_of_1s_input)
+        # no more dots
+        number_of_dots_input = input_text.count('.')
+        number_of_dots_output = actual_result.count('.')
+        self.assertTrue(number_of_dots_input == number_of_dots_output)
+        # no other chars except Y
+        other_chars = actual_result.replace('.', '').replace('X', '').replace('1', '').replace('\n', ''). \
+            replace('Y', '')
+        self.assertEqual(other_chars, '')
 
     @staticmethod
     def input_generator(dimension_1, dimension_2):
