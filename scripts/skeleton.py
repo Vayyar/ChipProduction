@@ -1,11 +1,15 @@
 import argparse
 import enum
 import json
+import subprocess
 from collections import Counter
 from pathlib import Path
 from string import Template
 
 from pystdf.IO import Parser
+from pystdf.Importer import MemoryWriter
+from pystdf.V4 import prr
+
 
 def parse_file(path_to_read_from):
     type_of_file = path_to_read_from.suffix
@@ -400,6 +404,29 @@ def combine_text_file_with_result_grid(wafer_grid, rest_as_template):
     return final_text
 
 
+def test_consistency():
+    # read last .stdf running result
+    result_file_path = get_output_file_path(args.output_dir_path, args.input_file_path)
+    with open(result_file_path, 'r') as result_file:
+        result_wafer = result_file.read()
+    # restore the original wafer
+    test_wafer = result_wafer.replace('Y', '1')
+    # make new .txt test file from the original wafer
+    test_file_path = result_file_path.parents[1] / 'resources/test_wafer.txt'
+    with open(test_file_path, 'w') as test_file:
+        test_file.write(test_wafer)
+    # run this python file on the new .txt file
+    output_dir_path = Path(__file__).parents[1] / 'results'
+    subprocess.call(f'python {__file__} {test_file_path} {output_dir_path} '
+                    f'{args.neighbors_file_path}', shell=True)
+    # read the last command result
+    output_file_path = get_output_file_path(output_dir_path, test_file_path)
+    with open(output_file_path, 'r') as result_from_text_file:
+        result_from_text_file_wafer_str = result_from_text_file.read()
+    # compare them.
+    assert result_from_text_file_wafer_str == result_wafer
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('input_file_path', type=lambda p: Path(p), help='path for input file.')
@@ -407,7 +434,11 @@ if __name__ == '__main__':
     parser.add_argument('neighbors_file_path', type=lambda p: Path(p), help='path for table file.')
     args = parser.parse_args()
     arguments_validation(args)
-    chips_grid, rest_of_the_text_as_template = parse_text_file(args.input_file_path)
+    chips_grid, rest_of_file = parse_file(args.input_file_path)
     processed_grid = apply_algorithm_on_grid(chips_grid, args.neighbors_file_path)
-    result_text = rest_of_the_text_as_template.substitute({'wafer': processed_grid})
+    file_type = args.input_file_path.suffix
+    result_text = combine_result_with_rest(chips_grid, rest_of_file, file_type)
     save_result_as_text(result_text, args.output_dir_path, args.input_file_path)
+    #       ##        TEST             ######
+    if args.input_file_path.suffix == '.stdf':
+        test_consistency()
