@@ -358,6 +358,10 @@ class WrongArgumentsException(Exception):
         return f'WrongArgumentException!!!  {self.message if self.message is not None else ""}'
 
 
+def combine_result_with_rest(wafer_grid, rest, type_of_file):
+    methods_dict = {'.txt': combine_text_file_with_result_grid, '.stdf': combine_text_file_with_result_grid}
+    return methods_dict[type_of_file](wafer_grid, rest)
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('input_file_path', type=lambda p: Path(p), help='path for input file.')
