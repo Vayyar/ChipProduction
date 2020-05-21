@@ -30,6 +30,20 @@ def parse_stdf_file(path_to_read_from):
             rectype, fields = dataSrc
 
             if rectype == prr:
+            """
+            prr: Contains the result information relating to each part tested by the test program.
+            The PRR and the Part Information Record (PIR) bracket all the stored information
+            pertaining to one tested part.
+            i.e it contains the pass or fail data for each chip.
+            link for documentation : http://www.kanwoda.com/wp-content/uploads/2015/05/std-spec.pdf
+            see in the prr section page 41.
+            ----------------------------------------------------------------------------------------
+            X_COORD | are fields of prr Have legal values in the range -32767 to 32767.
+            Y_COORD |  A missing value is indicated by the value -32768.
+            ----------------------------------------------------------------------------------------
+            PART_FLG | is also a field of prr, that contains several bits the three of them
+                     | is indicating pass fail 0 = Part passed 1 = Part failed.
+            """
                 x_coordinate = fields[prr.X_COORD]
                 y_coordinate = fields[prr.Y_COORD]
                 is_fail = (fields[prr.PART_FLG] & 8) >> 3
