@@ -2,6 +2,7 @@ import argparse
 import copy
 import enum
 import json
+import logging
 from collections import Counter
 from pathlib import Path
 from string import Template
@@ -24,6 +25,7 @@ def separate_un_relevant_lines(chips_map_as_str):
     :param chips_map_as_str: content of a wafer file as .txt
     :return: only the wafer grid text that contains . X 1 only.
     """
+    logger.debug('before separate wafer grid from text')
     chips_map_striped = chips_map_as_str.strip()
     file_lines_list = chips_map_striped.split('\n')
     file_lines_striped_list = [line.strip() for line in file_lines_list]
@@ -36,12 +38,15 @@ def separate_un_relevant_lines(chips_map_as_str):
     chips_map_part_string = '\n'.join(chips_map_part_list)
     rest_of_the_text = chips_map_as_str.replace(chips_map_part_string, '$wafer')
     rest_of_text_as_template = Template(rest_of_the_text)
+    logger.debug('after separate wafer grid from text')
     return chips_map_part_string, rest_of_text_as_template
 
 
 def handle_two_wafers_case(relevant_indexes_set):
     if is_not_continuous_set(relevant_indexes_set):
-        raise BadWaferFileException('There are 2 wafers in the same file with same length')
+        error_message = 'There are 2 wafers in the same file with same length'
+        logger.error(error_message)
+        raise BadWaferFileException(error_message)
 
 
 class BadWaferFileException(Exception):
@@ -96,6 +101,7 @@ class ChipsGrid:
 
     @staticmethod
     def make_chips_grid(map_as_string):
+        logger.debug('before creating a ChipsGrid from wafer text')
         map_as_list = map_as_string.split('\n')
         chips_grid_obj = list()
         for row_index, chips_row in enumerate(map_as_list):
@@ -103,6 +109,7 @@ class ChipsGrid:
             for column_index, chip_state in enumerate(chips_row):
                 current_chip = Chip(row_index, column_index, chip_state)
                 chips_grid_obj[-1].append(current_chip)
+        logger.debug('after creating a ChipsGrid from wafer text')
         return chips_grid_obj
 
     def __deepcopy__(self, memodict={}):
@@ -213,6 +220,7 @@ class Chip:
 
 
 def apply_algorithm_on_grid(wafer_grid, neighbors_path):
+    logger.debug('before apply the algorithm')
     wafer_grid_copy = copy.deepcopy(wafer_grid)
     neighbors_table = make_dict_of_neighbors_threshold(neighbors_path)
     for grid_cell in wafer_grid_copy:
@@ -223,7 +231,7 @@ def apply_algorithm_on_grid(wafer_grid, neighbors_path):
         threshold = neighbors_table[total_number_of_cell_neighbors]
         new_state = ChipState.FAIL_BY_PREDICTION if total_number_of_x_neighbors >= threshold else ChipState.PASS
         grid_cell.state = new_state
-
+    logger.debug('after apply the algorithm')
     return wafer_grid_copy
 
 
@@ -239,11 +247,13 @@ def save_result_text(result_grid, output_directory_path, input_path):
 
 
 def save_result_as_text(result_grid, output_directory_path, input_path):
+    logger.debug('saving result as text file')
     grid_text = str(result_grid)
     output_file_name = choose_output_filename(input_path)
     output_file_path = output_directory_path / output_file_name
     with open(output_file_path, 'w') as output_file:
         output_file.write(grid_text)
+    logger.debug('after saving result as text file')
 
 
 def choose_output_filename(input_path):
@@ -251,6 +261,7 @@ def choose_output_filename(input_path):
 
 
 def arguments_validation(arguments):
+    logger.debug('now validating input arguments')
     for attribute, attribute_argument in vars(arguments).items():
         if not isinstance(attribute_argument, Path):
             continue
@@ -260,6 +271,7 @@ def arguments_validation(arguments):
             raise WrongArgumentsException(f"The path {attribute_argument} is a file while we expect to a directory")
         if 'file' in attribute and attribute_argument.is_dir():
             raise WrongArgumentsException(f"The path {attribute_argument} is a directory while we expect a file")
+    logger.debug('all arguments are valid')
 
 
 class WrongArgumentsException(Exception):
@@ -273,14 +285,29 @@ class WrongArgumentsException(Exception):
         return f'WrongArgumentException!!!  {self.message if self.message is not None else ""}'
 
 
+def create_logger():
+    logger_inner_var = logging.getLogger('ChipProduction')
+    logger_inner_var.setLevel(logging.DEBUG)
+    file_handler = logging.FileHandler('ChipProductionLogger.log')
+    file_handler_formatter = logging.Formatter('%(levelname)s - %(message)s')
+    file_handler.setFormatter(file_handler_formatter)
+    logger_inner_var.addHandler(file_handler)
+    return logger_inner_var
+
+
 if __name__ == '__main__':
+    logger = create_logger()
+    logger.info('starting...')
     parser = argparse.ArgumentParser()
     parser.add_argument('input_file_path', type=lambda p: Path(p), help='path for input file.')
     parser.add_argument('output_dir_path', type=lambda p: Path(p), help='path for output directory.')
     parser.add_argument('neighbors_file_path', type=lambda p: Path(p), help='path for table file.')
     args = parser.parse_args()
+    logger.debug('after parse arguments')
     arguments_validation(args)
     chips_grid, rest_of_the_text_as_template = parse_text_file(args.input_file_path)
     processed_grid = apply_algorithm_on_grid(chips_grid, args.neighbors_file_path)
     result_text = rest_of_the_text_as_template.substitute({'wafer': processed_grid})
     save_result_as_text(result_text, args.output_dir_path, args.input_file_path)
+    logger.info('end.')
+
