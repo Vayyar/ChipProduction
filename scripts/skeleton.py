@@ -313,17 +313,21 @@ def make_dict_of_neighbors_threshold(neighbors_path):
     return neighbors_dict
 
 
-def save_result_text(result_grid, output_directory_path, input_path):
 def save_result_as_text(result_grid, output_directory_path, input_path):
     grid_text = str(result_grid)
-    output_file_name = choose_output_filename(input_path)
-    output_file_path = output_directory_path / output_file_name
+    output_file_path = get_output_file_path(output_directory_path, input_path)
     with open(output_file_path, 'w') as output_file:
         output_file.write(grid_text)
 
 
+def get_output_file_path(output_directory_path, input_path):
+    output_file_name = choose_output_filename(input_path)
+    output_file_path = output_directory_path / output_file_name
+    return output_file_path
+
+
 def choose_output_filename(input_path):
-    return f'result_of_{Path(input_path).stem}.txt'
+    return f'result_of_{input_path.stem}.txt'  # {input_path.suffix}'
 
 
 def arguments_validation(arguments):
