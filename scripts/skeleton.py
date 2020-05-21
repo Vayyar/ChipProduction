@@ -24,12 +24,9 @@ def parse_stdf_file(path_to_read_from):
     class StdfToGrid:
 
         def after_begin(self):
-            self.pool = set()
+            self.chips_set = set()
 
-        def after_send(self, dataSrc):
-            rectype, fields = dataSrc
-
-            if rectype == prr:
+        def after_send(self, data):
             """
             prr: Contains the result information relating to each part tested by the test program.
             The PRR and the Part Information Record (PIR) bracket all the stored information
@@ -44,17 +41,20 @@ def parse_stdf_file(path_to_read_from):
             PART_FLG | is also a field of prr, that contains several bits the three of them
                      | is indicating pass fail 0 = Part passed 1 = Part failed.
             """
+            record_type, fields = data
+
+            if record_type == prr:
                 x_coordinate = fields[prr.X_COORD]
                 y_coordinate = fields[prr.Y_COORD]
                 is_fail = (fields[prr.PART_FLG] & 8) >> 3
                 state = 'X' if is_fail else '1'
                 current_chip = Chip(y_coordinate, x_coordinate, state)
-                if current_chip in self.pool and current_chip.state == ChipState.FAIL:
-                    self.pool.remove(current_chip)
-                self.pool.add(current_chip)
+                if current_chip in self.chips_set and current_chip.state == ChipState.FAIL:
+                    self.chips_set.remove(current_chip)
+                self.chips_set.add(current_chip)
 
         def after_complete(self):
-            self.grid = StdfToGrid.partition_into_rows(self.pool)
+            self.grid = StdfToGrid.partition_into_rows(self.chips_set)
             StdfToGrid.sort_each_chips_row(self.grid)
             self.grid = StdfToGrid.make_square_from_table(self.grid)
             self.grid = ChipsGrid.make_chips_grid_from_grid(self.grid)
@@ -63,9 +63,9 @@ def parse_stdf_file(path_to_read_from):
             expected_grid = self.grid
 
         @staticmethod
-        def partition_into_rows(pool):
+        def partition_into_rows(chips_set):
             rows_dict = dict()
-            for chip in pool:
+            for chip in chips_set:
                 if chip.row not in rows_dict:
                     rows_dict[chip.row] = list()
                 rows_dict[chip.row].append(chip)
