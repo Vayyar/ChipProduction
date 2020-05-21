@@ -24,8 +24,6 @@ def parse_stdf_file(path_to_read_from):
     class StdfToGrid:
 
         def after_begin(self):
-            self.prev = 0
-            self.text = ""
             self.pool = set()
 
         def after_send(self, dataSrc):
