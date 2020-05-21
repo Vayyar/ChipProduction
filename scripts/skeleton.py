@@ -310,6 +310,11 @@ def create_logger():
     return logger_inner_var
 
 
+def change_all_log_levels_for_debug():
+    for handler in logger.handlers:
+        handler.setLevel(logging.DEBUG)
+
+
 if __name__ == '__main__':
     logger = create_logger()
     logger.info('Starting.')
@@ -317,8 +322,11 @@ if __name__ == '__main__':
     parser.add_argument('input_file_path', type=lambda p: Path(p), help='path for input file.')
     parser.add_argument('output_dir_path', type=lambda p: Path(p), help='path for output directory.')
     parser.add_argument('neighbors_file_path', type=lambda p: Path(p), help='path for table file.')
+    parser.add_argument("-v", "--verbose", help="increase output verbosity", action="store_true")
     args = parser.parse_args()
     logger.debug('End of parse arguments.')
+    if args.verbose:
+        change_all_log_levels_for_debug()
     arguments_validation(args)
     chips_grid, rest_of_the_text_as_template = parse_text_file(args.input_file_path)
     processed_grid = apply_algorithm_on_grid(chips_grid, args.neighbors_file_path)
