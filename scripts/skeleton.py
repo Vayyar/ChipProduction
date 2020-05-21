@@ -91,15 +91,16 @@ def parse_stdf_file(path_to_read_from):
 def parse_text_file(path_to_read_from):
     with open(path_to_read_from, 'r') as input_file:
         file_content = input_file.read()
-    chips_map_as_string, rest_of_text_as_template = separate_un_relevant_lines(file_content)
+    chips_map_as_string, rest_of_text_as_template = separate_un_relevant_text_lines(file_content)
     chips_map_as_grid = ChipsGrid(chips_map_as_string)
     return chips_map_as_grid, rest_of_text_as_template
 
 
-def separate_un_relevant_lines(chips_map_as_str):
+def separate_un_relevant_text_lines(chips_map_as_str):
     """
+    separate the text file into wafer and all the other stuff.
     :param chips_map_as_str: content of a wafer file as .txt
-    :return: only the wafer grid text that contains . X 1 only.
+    :return: The wafer grid text that contains . X 1 only and template of all the other stuff.
     """
     chips_map_striped = chips_map_as_str.strip()
     file_lines_list = chips_map_striped.split('\n')
@@ -256,6 +257,12 @@ class Chip:
 
     def __repr__(self):
         return Chip.translate_state_from_enum_to_string(self.state)
+
+    def __eq__(self, other):
+        return all([self.row == other.row, self.column == other.column])
+
+    def __hash__(self):
+        return hash(self.column) + 1024 * hash(self.row)
 
     @staticmethod
     def translate_state_from_enum_to_string(chip_state_enum):
