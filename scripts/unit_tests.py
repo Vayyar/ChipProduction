@@ -1,5 +1,6 @@
 import math
 import unittest
+import logging
 from pathlib import Path
 
 from scripts import skeleton
@@ -111,7 +112,7 @@ class UnitTests(unittest.TestCase):
         self.a_tester(self.neighbors_filename, input_text, expected_output_text)
 
     # Takes 2 seconds
-    def test_no_less_xs_no_more_1s_no_more_dots_no_other_chars(self):
+    def test_same_amount_xs_no_more_1s_same_amount_of_dots_no_other_chars(self):
 
         neighbors_filename = 'neighbors_table.json'
         # TODO put here smaller numbers for fast running
@@ -121,15 +122,18 @@ class UnitTests(unittest.TestCase):
             number_of_xs_input = input_text.count('X')
             actual_result = self.calculate_output(neighbors_filename, input_text)
             number_of_xs_output = actual_result.count('X')
-            self.assertTrue(number_of_xs_output >= number_of_xs_input)
+            self.assertTrue(number_of_xs_output == number_of_xs_input)
             # no more 1s
             number_of_1s_input = input_text.count('1')
             number_of_1s_output = actual_result.count('1')
             self.assertTrue(number_of_1s_output <= number_of_1s_input)
+            # (#Y + #1) in output == (#1) in input.
+            number_of_ys_output = actual_result.count('Y')
+            self.assertTrue(number_of_1s_output + number_of_ys_output == number_of_1s_input)
             # no more dots
             number_of_dots_input = input_text.count('.')
             number_of_dots_output = actual_result.count('.')
-            self.assertTrue(number_of_dots_input <= number_of_dots_output)
+            self.assertTrue(number_of_dots_input == number_of_dots_output)
             # no other chars except Y
             other_chars = actual_result.replace('.', '').replace('X', '').replace('1', '').replace('\n', '').\
                 replace('Y', '')
