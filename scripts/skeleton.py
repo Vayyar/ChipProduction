@@ -362,6 +362,37 @@ def combine_result_with_rest(wafer_grid, rest, type_of_file):
     methods_dict = {'.txt': combine_text_file_with_result_grid, '.stdf': combine_text_file_with_result_grid}
     return methods_dict[type_of_file](wafer_grid, rest)
 
+
+def combine_stdf_file_with_result_grid_future(wafer_grid, rest_as_parser):
+    class StdfToGrid(MemoryWriter):
+
+        def after_begin(self):
+            output_file_path = get_output_file_path(args.output_dir_path, args.input_file_path)
+            if Path.exists(output_file_path):
+                Path.unlink(output_file_path)
+            self.output_file = open(output_file_path, 'a')
+
+        def before_send(self, dataSource):
+            rectype, fields = dataSource
+            # print("dataSource = " + str(dataSource))
+            if rectype == prr:
+                x_coordinate = fields[prr.X_COORD]
+                y_coordinate = fields[prr.Y_COORD]
+                if wafer_grid.map_as_grid[y_coordinate][x_coordinate].state == ChipState.FAIL_BY_PREDICTION:
+                    fields[prr.PART_FLG] |= 8
+            text = str(dataSource)
+            # print(text)
+            self.output_file.write(text)
+
+        def after_complete(self):
+            self.output_file.close()
+
+    with open(args.input_file_path, 'rb') as stdf_file:
+        parser_object = Parser(inp=stdf_file)
+        # parser_object.addSink(StdfToGrid)
+        parser_object.addSink(MemoryWriter())
+        parser_object.parse()
+        # print(parser_object)
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('input_file_path', type=lambda p: Path(p), help='path for input file.')
