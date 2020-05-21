@@ -5,6 +5,7 @@ import subprocess
 from collections import Counter
 from pathlib import Path
 from string import Template
+from subprocess import PIPE
 
 from pystdf.IO import Parser
 from pystdf.Importer import MemoryWriter
@@ -417,9 +418,12 @@ def test_consistency():
         test_file.write(test_wafer)
     # run this python file on the new .txt file
     output_dir_path = Path(__file__).parents[1] / 'results'
-    subprocess.call(f'python {__file__} {test_file_path} {output_dir_path} '
-                    f'{args.neighbors_file_path}', shell=True)
-    # read the last command result
+    command = ['python', f'{__file__}', f'{test_file_path}', f'{output_dir_path}', f'{args.neighbors_file_path}']
+    process = subprocess.Popen(command, stdin=PIPE, stdout=PIPE, stderr=PIPE)
+    # when merge remove comment from this section.
+    # output, err = process.communicate()
+    # if len(err) > 0:
+    #   logger.error(err)
     output_file_path = get_output_file_path(output_dir_path, test_file_path)
     with open(output_file_path, 'r') as result_from_text_file:
         result_from_text_file_wafer_str = result_from_text_file.read()
