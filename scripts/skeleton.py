@@ -289,7 +289,7 @@ def create_logger():
     logger_inner_var = logging.getLogger('ChipProduction')
     logger_inner_var.setLevel(logging.DEBUG)
     file_handler = logging.FileHandler('ChipProductionLogger.log')
-    file_handler_formatter = logging.Formatter('%(levelname)s - %(message)s')
+    file_handler_formatter = logging.Formatter(f'%(funcName)s - %(levelname)s - %(message)s')
     file_handler.setFormatter(file_handler_formatter)
     logger_inner_var.addHandler(file_handler)
     return logger_inner_var
