@@ -5,11 +5,89 @@ from collections import Counter
 from pathlib import Path
 from string import Template
 
+from pystdf.IO import Parser
 
 def parse_file(path_to_read_from):
     type_of_file = path_to_read_from.suffix
     methods_dict = {'.txt': parse_text_file, '.stdf': parse_stdf_file}
     return methods_dict[type_of_file](path_to_read_from)
+
+
+def parse_stdf_file(path_to_read_from):
+    expected_grid = None
+
+    class StdfToGrid:
+
+        def after_begin(self):
+            self.prev = 0
+            self.text = ""
+            self.pool = set()
+
+        def after_send(self, dataSrc):
+            rectype, fields = dataSrc
+
+            if rectype == prr:
+                x_coordinate = fields[prr.X_COORD]
+                y_coordinate = fields[prr.Y_COORD]
+                is_fail = (fields[prr.PART_FLG] & 8) >> 3
+                state = 'X' if is_fail else '1'
+                current_chip = Chip(y_coordinate, x_coordinate, state)
+                if current_chip in self.pool and current_chip.state == ChipState.FAIL:
+                    self.pool.remove(current_chip)
+                self.pool.add(current_chip)
+
+        def after_complete(self):
+            self.grid = StdfToGrid.partition_into_rows(self.pool)
+            StdfToGrid.sort_each_chips_row(self.grid)
+            self.grid = StdfToGrid.make_square_from_table(self.grid)
+            self.grid = ChipsGrid.make_chips_grid_from_grid(self.grid)
+            # print(self.grid)
+            nonlocal expected_grid
+            expected_grid = self.grid
+
+        @staticmethod
+        def partition_into_rows(pool):
+            rows_dict = dict()
+            for chip in pool:
+                if chip.row not in rows_dict:
+                    rows_dict[chip.row] = list()
+                rows_dict[chip.row].append(chip)
+            # turn the dict into list
+            number_of_rows = max(rows_dict.keys()) + 1
+            grid = [rows_dict[index] for index in range(number_of_rows)]
+            return grid
+
+        @staticmethod
+        def sort_each_chips_row(grid):
+            for chips_row in grid:
+                chips_row.sort(key=lambda chip: chip.column)
+
+        @staticmethod
+        def make_square_from_table(chips_table):
+            max_row_length = max(len(chips_row) for chips_row in chips_table)
+            square_grid = list()
+            for chips_row in chips_table:
+                filled_row = StdfToGrid.fill_row_edges(chips_row, max_row_length)
+                square_grid.append(filled_row)
+            return square_grid
+
+        @staticmethod
+        def fill_row_edges(chips_row, final_length):
+            first_filled_column = chips_row[0].column
+            last_filled_column = chips_row[-1].column
+            row_number = chips_row[0].row
+            row_start = [Chip(row_number, column, '.') for column in range(first_filled_column)]
+            row_end = [Chip(row_number, column, '.') for column in range(last_filled_column + 1, final_length)]
+            return row_start + chips_row + row_end
+
+    with open(path_to_read_from, 'rb') as stdf_file:
+        parser_object = Parser(inp=stdf_file)
+        parser_object.addSink(StdfToGrid)
+        parser_object.parse()
+
+    return expected_grid, Template("$wafer")
+
+
 def parse_text_file(path_to_read_from):
     with open(path_to_read_from, 'r') as input_file:
         file_content = input_file.read()
