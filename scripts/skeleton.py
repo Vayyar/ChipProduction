@@ -8,7 +8,6 @@ from string import Template
 from subprocess import PIPE
 
 from pystdf.IO import Parser
-from pystdf.Importer import MemoryWriter
 from pystdf.V4 import prr
 
 
@@ -384,6 +383,12 @@ def combine_result_with_rest(wafer_grid, rest, type_of_file):
     return methods_dict[type_of_file](wafer_grid, rest)
 
 
+"""
+#################################################################################
+ ####                   HERE SOME INFRASTRUCTURE FOR THE FUTURE TO WRITE THE
+ ####                    RESULT AS .STDF FILE.
+ #################################################################################
+from pystdf.Importer import MemoryWriter
 def combine_stdf_file_with_result_grid_future(wafer_grid, rest_as_parser):
     class StdfToGrid(MemoryWriter):
 
@@ -414,6 +419,7 @@ def combine_stdf_file_with_result_grid_future(wafer_grid, rest_as_parser):
         parser_object.addSink(MemoryWriter())
         parser_object.parse()
         # print(parser_object)
+"""
 
 
 def combine_text_file_with_result_grid(wafer_grid, rest_as_template):
