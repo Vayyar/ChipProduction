@@ -3,9 +3,14 @@ import copy
 import enum
 import json
 import logging
+from logging.handlers import RotatingFileHandler
 from collections import Counter
 from pathlib import Path
 from string import Template
+
+logger = logging.getLogger('ChipProductionLogger')
+handler = RotatingFileHandler('ChipProductionLogger.log', maxBytes=100_000, backupCount=1)
+logger.addHandler(handler)
 
 
 def parse_file(path_to_read_from):
