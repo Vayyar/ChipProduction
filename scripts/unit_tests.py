@@ -13,6 +13,18 @@ class UnitTests(unittest.TestCase):
         self.neighbors_filename = 'neighbors_table.json'
         self.wafer_initial_states = ['X', '1', '.']
 
+    def test_ignore_small_noises(self):
+        input_text = ".\n" \
+                     "XXX\n" \
+                     "XXX\n" \
+                     "XXX\n" \
+                     "."
+        expected_wafer_text = "XXX\n" \
+                              "XXX\n" \
+                              "XXX"
+        actual_wafer_text, _ = skeleton.separate_un_relevant_lines(input_text)
+        self.assertEqual(actual_wafer_text, expected_wafer_text)
+
     def test_middle(self):
         input_text = "XXX\n" \
                      "X1X\n" \
