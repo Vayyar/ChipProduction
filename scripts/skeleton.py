@@ -299,6 +299,9 @@ def create_logger():
     file_handler_formatter = logging.Formatter(f'%(funcName)s - %(levelname)s - %(message)s')
     file_handler.setFormatter(file_handler_formatter)
     logger_inner_var.addHandler(file_handler)
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(logging.INFO)
+    logger_inner_var.addHandler(console_handler)
     return logger_inner_var
 
 
