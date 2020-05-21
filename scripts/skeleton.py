@@ -338,8 +338,13 @@ def arguments_validation(arguments):
             raise WrongArgumentsException(f"The path {attribute_argument} don't exist")
         if 'dir' in attribute and attribute_argument.is_file():
             raise WrongArgumentsException(f"The path {attribute_argument} is a file while we expect to a directory")
-        if 'file' in attribute and attribute_argument.is_dir():
-            raise WrongArgumentsException(f"The path {attribute_argument} is a directory while we expect a file")
+        if 'file' in attribute:
+            if attribute_argument.is_dir():
+                raise WrongArgumentsException(f"The path {attribute_argument} is a directory while we expect a file")
+            supported_file_types = {'.txt', '.stdf'}
+            if 'input' in attribute and attribute_argument.suffix not in supported_file_types:
+                raise WrongArgumentsException(f"The type of the file {attribute_argument.name} is not supported"
+                                              f" we support only .txt and .stdf file types.")
 
 
 class WrongArgumentsException(Exception):
