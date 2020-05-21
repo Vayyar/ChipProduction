@@ -12,6 +12,22 @@ class UnitTests(unittest.TestCase):
         self.unit_tests_directory = Path(__file__).parents[1].absolute() / 'unit_tests'
         self.neighbors_filename = 'neighbors_table.json'
         self.wafer_initial_states = ['X', '1', '.']
+    ##########################################################################################
+    # ############                   ASK THIS IN THE MEETING                        ##########
+    #          TEST FOR ILLUSTRATE ALGORITHMIC QUESTION                  #
+
+    def test_is_y_exchange_its_neighbor_to_y(self):
+        input_text = "...\n" \
+                     "X11\n" \
+                     "..."
+        expected_wafer_text_first_option = "...\n" \
+                                           "XY1\n" \
+                                           "..."
+        expected_wafer_text_second_option = "...\n" \
+                                            "XYY\n" \
+                                            "..."
+        self.a_tester(self.neighbors_filename, input_text, expected_wafer_text_first_option)
+    # #################################################################################################
 
     def test_ignore_small_noises(self):
         input_text = ".\n" \
