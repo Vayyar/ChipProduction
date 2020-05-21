@@ -2,6 +2,7 @@ import argparse
 import enum
 import json
 import subprocess
+import time
 from collections import Counter
 from pathlib import Path
 from string import Template
@@ -447,6 +448,8 @@ def test_consistency():
     # if len(err) > 0:
     #   logger.error(err)
     output_file_path = get_output_file_path(output_dir_path, test_file_path)
+    while not Path.exists(output_file_path):
+        time.sleep(0.01)
     with open(output_file_path, 'r') as result_from_text_file:
         result_from_text_file_wafer_str = result_from_text_file.read()
     # compare them.
