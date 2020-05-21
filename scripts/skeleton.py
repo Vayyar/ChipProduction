@@ -180,6 +180,12 @@ class ChipsGrid:
                 chips_grid_obj[-1].append(current_chip)
         return chips_grid_obj
 
+    @staticmethod
+    def make_chips_grid_from_grid(chips_table):
+        grid = ChipsGrid('')
+        grid.__map_as_grid = chips_table
+        return grid
+
     @property
     def map_as_grid(self):
         return self.__map_as_grid
