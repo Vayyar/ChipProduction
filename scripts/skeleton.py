@@ -393,6 +393,13 @@ def combine_stdf_file_with_result_grid_future(wafer_grid, rest_as_parser):
         parser_object.addSink(MemoryWriter())
         parser_object.parse()
         # print(parser_object)
+
+
+def combine_text_file_with_result_grid(wafer_grid, rest_as_template):
+    final_text = rest_as_template.substitute({'wafer': wafer_grid})
+    return final_text
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('input_file_path', type=lambda p: Path(p), help='path for input file.')
