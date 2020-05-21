@@ -46,12 +46,16 @@ def parse_stdf_file(path_to_read_from):
             if record_type == prr:
                 x_coordinate = fields[prr.X_COORD]
                 y_coordinate = fields[prr.Y_COORD]
-                is_fail = (fields[prr.PART_FLG] & 8) >> 3
+                is_fail = StdfToGrid.is_fail_prr(fields)
                 state = 'X' if is_fail else '1'
                 current_chip = Chip(y_coordinate, x_coordinate, state)
                 if current_chip in self.chips_set and current_chip.state == ChipState.FAIL:
                     self.chips_set.remove(current_chip)
                 self.chips_set.add(current_chip)
+
+        @staticmethod
+        def is_fail_prr(fields):
+            return (fields[prr.PART_FLG] & 8) >> 3
 
         def after_complete(self):
             self.grid = StdfToGrid.partition_into_rows(self.chips_set)
