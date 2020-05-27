@@ -1,12 +1,10 @@
-import argparse
 import enum
 import json
-import subprocess
-import time
 from collections import Counter
 from pathlib import Path
 from string import Template
 
+from gooey import Gooey, GooeyParser
 from pystdf.IO import Parser
 from pystdf.V4 import prr
 
@@ -427,15 +425,18 @@ def combine_text_file_with_result_grid(wafer_grid, rest_as_template):
     return final_text
 
 
-
+@Gooey(program_name="Die cluster")
+def get_argument():
+    parser = GooeyParser()
+    parser.add_argument('input_file_path', type=Path, help='path for input file.')
+    parser.add_argument('output_dir_path', type=Path, help='path for output directory.')
+    parser.add_argument('neighbors_file_path', type=Path, help='path for table file.')
+    args = parser.parse_args()
+    return args
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('input_file_path', type=lambda p: Path(p), help='path for input file.')
-    parser.add_argument('output_dir_path', type=lambda p: Path(p), help='path for output directory.')
-    parser.add_argument('neighbors_file_path', type=lambda p: Path(p), help='path for table file.')
-    args = parser.parse_args()
+    args = get_argument()
     arguments_validation(args)
     chips_grid, rest_of_file = parse_file(args.input_file_path)
     processed_grid = apply_algorithm_on_grid(chips_grid, args.neighbors_file_path)
