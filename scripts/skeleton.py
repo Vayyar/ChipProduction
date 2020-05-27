@@ -316,8 +316,8 @@ def create_logger():
 
 
 def change_all_log_levels_for_debug():
-    for handler in logger.handlers:
-        handler.setLevel(logging.DEBUG)
+    for logger_handler in logger.handlers:
+        logger_handler.setLevel(logging.DEBUG)
 
 
 if __name__ == '__main__':
