@@ -6,7 +6,6 @@ import time
 from collections import Counter
 from pathlib import Path
 from string import Template
-from subprocess import PIPE
 
 from pystdf.IO import Parser
 from pystdf.V4 import prr
@@ -442,7 +441,7 @@ def test_consistency():
     # run this python file on the new .txt file
     output_dir_path = Path(__file__).parents[1] / 'results'
     command = ['python', f'{__file__}', f'{test_file_path}', f'{output_dir_path}', f'{args.neighbors_file_path}']
-    process = subprocess.Popen(command, stdin=PIPE, stdout=PIPE, stderr=PIPE)
+    process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     # when merge remove comment from this section.
     # output, err = process.communicate()
     # if len(err) > 0:
