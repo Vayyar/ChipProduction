@@ -427,32 +427,7 @@ def combine_text_file_with_result_grid(wafer_grid, rest_as_template):
     return final_text
 
 
-def test_consistency():
-    # read last .stdf running result
-    result_file_path = get_output_file_path(args.output_dir_path, args.input_file_path)
-    with open(result_file_path, 'r') as result_file:
-        result_wafer = result_file.read()
-    # restore the original wafer
-    test_wafer = result_wafer.replace('Y', '1')
-    # make new .txt test file from the original wafer
-    test_file_path = result_file_path.parents[1] / 'resources/test_wafer.txt'
-    with open(test_file_path, 'w') as test_file:
-        test_file.write(test_wafer)
-    # run this python file on the new .txt file
-    output_dir_path = Path(__file__).parents[1] / 'results'
-    command = ['python', f'{__file__}', f'{test_file_path}', f'{output_dir_path}', f'{args.neighbors_file_path}']
-    process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    # when merge remove comment from this section.
-    # output, err = process.communicate()
-    # if len(err) > 0:
-    #   logger.error(err)
-    output_file_path = get_output_file_path(output_dir_path, test_file_path)
-    while not Path.exists(output_file_path):
-        time.sleep(0.01)
-    with open(output_file_path, 'r') as result_from_text_file:
-        result_from_text_file_wafer_str = result_from_text_file.read()
-    # compare them.
-    assert result_from_text_file_wafer_str == result_wafer
+
 
 
 if __name__ == '__main__':
@@ -467,6 +442,3 @@ if __name__ == '__main__':
     file_type = args.input_file_path.suffix
     result_text = combine_result_with_rest(chips_grid, rest_of_file, file_type)
     save_result_as_text(result_text, args.output_dir_path, args.input_file_path)
-    #       ##        TEST             ######
-    if args.input_file_path.suffix == '.stdf':
-        test_consistency()
