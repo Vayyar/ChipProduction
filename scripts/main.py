@@ -2,8 +2,10 @@ import copy
 import enum
 import json
 import logging
-from logging.handlers import RotatingFileHandler
+# TODO find better solution later.
+import sys
 from collections import Counter
+from logging.handlers import RotatingFileHandler
 from pathlib import Path
 from string import Template
 
@@ -11,6 +13,9 @@ from gooey import Gooey, GooeyParser
 from pystdf.IO import Parser
 from pystdf.V4 import prr
 
+sys.path.append('..')
+
+from scripts import viewer
 
 logger = logging.getLogger('ChipProductionLogger')
 handler = RotatingFileHandler('ChipProductionLogger.log', maxBytes=100_000, backupCount=1)
