@@ -27,6 +27,7 @@ class UnitTests(unittest.TestCase):
                                             "XYY\n" \
                                             "..."
         self.a_tester(self.neighbors_filename, input_text, expected_wafer_text_first_option)
+
     # #################################################################################################
 
     def test_ignore_small_noises(self):
@@ -38,7 +39,7 @@ class UnitTests(unittest.TestCase):
         expected_wafer_text = "XXX\n" \
                               "XXX\n" \
                               "XXX"
-        actual_wafer_text, _ = skeleton.separate_un_relevant_lines(input_text)
+        actual_wafer_text, _ = main.separate_un_relevant_text_lines(input_text)
         self.assertEqual(actual_wafer_text, expected_wafer_text)
 
     def test_middle(self):
@@ -230,8 +231,8 @@ class UnitTests(unittest.TestCase):
 
     def calculate_output(self, neighbors_filename, input_text):
         path_for_neighbors_table = self.unit_tests_directory / neighbors_filename
-        input_grid = skeleton.ChipsGrid(input_text)
-        actual_output_as_greed = skeleton.apply_algorithm_on_grid(input_grid, path_for_neighbors_table)
+        input_grid = main.ChipsGrid(input_text)
+        actual_output_as_greed = main.apply_algorithm_on_grid(input_grid, path_for_neighbors_table)
         actual_output_text = str(actual_output_as_greed)
         return actual_output_text
 
@@ -249,10 +250,10 @@ class UnitTests(unittest.TestCase):
         fo!?>>...XX11foo!\n
         """
         try:
-            _, __ = skeleton.separate_un_relevant_lines(un_relevant_text)
+            _, __ = main.separate_un_relevant_text_lines(un_relevant_text)
             self.assertTrue(False)
         except Exception as e:
-            self.assertEqual(type(e), skeleton.BadWaferFileException)
+            self.assertEqual(type(e), main.BadWaferFileException)
 
     def test_separate_un_relevant_lines_one_dot_file(self):
         un_relevant_text = """foooooo!?>>...XX11fooo!\n
@@ -263,7 +264,7 @@ class UnitTests(unittest.TestCase):
         fo!?>>...XX11foo!\n
         """
 
-        actual_result, _ = skeleton.separate_un_relevant_lines(un_relevant_text)
+        actual_result, _ = main.separate_un_relevant_text_lines(un_relevant_text)
         expected_result = '.'
         self.assertEqual(actual_result, expected_result)
 
@@ -279,7 +280,7 @@ class UnitTests(unittest.TestCase):
             foooooo!?>>...XX11fooo!
             fo!?>>...XX11foo!\n
             """
-        actual_result, _ = skeleton.separate_un_relevant_lines(un_relevant_text)
+        actual_result, _ = main.separate_un_relevant_text_lines(un_relevant_text)
         expected_result = '...\n' \
                           'X1X\n' \
                           '111'
@@ -289,14 +290,14 @@ class UnitTests(unittest.TestCase):
         rows_dimension, column_dimension = 5, 5
         sample_size = 10_000
         for _, test_wafer in zip(range(sample_size), UnitTests.input_generator(rows_dimension, column_dimension)):
-            wafer_grid = skeleton.ChipsGrid(test_wafer)
+            wafer_grid = main.ChipsGrid(test_wafer)
             wafer_text_result = str(wafer_grid)
             self.assertEqual(test_wafer, wafer_text_result)
 
     def test_make_dict_of_neighbors_threshold(self):
         neighbors_filename = 'neighbors_table.json'
         neighbors_path = self.unit_tests_directory / neighbors_filename
-        result_dict = skeleton.make_dict_of_neighbors_threshold(neighbors_path)
+        result_dict = main.make_dict_of_neighbors_threshold(neighbors_path)
         expected_dict = {0: 1, 1: 1, 2: 1, 3: 2, 4: 3, 5: 3, 6: 4, 7: 5, 8: 6}
         self.assertDictEqual(result_dict, expected_dict)
 
