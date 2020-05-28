@@ -497,11 +497,19 @@ def combine_text_file_with_result_grid(wafer_grid, rest_as_template):
 
 
 @Gooey(program_name="Die cluster")
+@Gooey(navigation='TABBED')
 def get_argument():
     parser = GooeyParser()
-    parser.add_argument('input_file_path', type=Path, help='path for input file.')
-    parser.add_argument('output_dir_path', type=Path, help='path for output directory.')
-    parser.add_argument('neighbors_file_path', type=Path, help='path for table file.')
+    default_paths_dict = get_default_paths()
+    parser.add_argument('input_file_path', metavar='input file path', widget='FileChooser',
+                        default=default_paths_dict['input'],
+                        type=Path, help='path for input file.')
+    parser.add_argument('output_dir_path', metavar='output dir path', widget='DirChooser',
+                        default=default_paths_dict['output'], type=Path,
+                        help='path for output directory.')
+    parser.add_argument('neighbors_file_path', metavar='neighbors file path',
+                        default=default_paths_dict['neighbors_table'], widget='FileChooser', type=Path,
+                        help='path for table file.')
     parser.add_argument("-v", "--verbose", help="increase output verbosity", action="store_true")
     args = parser.parse_args()
     return args
