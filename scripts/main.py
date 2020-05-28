@@ -373,7 +373,6 @@ def make_dict_of_neighbors_threshold(neighbors_path):
     logger.debug('End reading and processing neighbors threshold file.')
     return neighbors_dict
 
-
     pass
 
 
@@ -496,7 +495,6 @@ def combine_text_file_with_result_grid(wafer_grid, rest_as_template):
     return final_text
 
 
-@Gooey(program_name="Die cluster")
 @Gooey(navigation='TABBED')
 def get_argument():
     parser = GooeyParser()
@@ -515,6 +513,13 @@ def get_argument():
     return args
 
 
+def get_default_paths():
+    project_root = Path('C:\dev\ChipProduction')
+    default_paths = {'input': project_root / 'resources/example.txt', 'output': project_root / 'results'
+        , 'neighbors_table': Path('neighbors_table.json')}
+    return default_paths
+
+
 if __name__ == '__main__':
     logger = create_logger()
     logger.info('Starting.')
@@ -525,6 +530,7 @@ if __name__ == '__main__':
     arguments_validation(args)
     chips_grid, rest_of_file = parse_file(args.input_file_path)
     processed_grid = apply_algorithm_on_grid(chips_grid, args.neighbors_file_path)
+    viewer.plot_input_and_output(str(chips_grid), str(processed_grid))
     file_type = args.input_file_path.suffix
     result_text = combine_result_with_rest(processed_grid, rest_of_file, file_type)
     save_result_as_text(result_text, args.output_dir_path, args.input_file_path)
