@@ -495,7 +495,7 @@ def combine_text_file_with_result_grid(wafer_grid, rest_as_template):
     return final_text
 
 
-@Gooey(navigation='TABBED')
+@Gooey(navigation='TABBED', show_success_modal=False)
 def get_argument():
     parser = GooeyParser()
     default_paths_dict = get_default_paths()
@@ -530,7 +530,6 @@ if __name__ == '__main__':
     arguments_validation(args)
     chips_grid, rest_of_file = parse_file(args.input_file_path)
     processed_grid = apply_algorithm_on_grid(chips_grid, args.neighbors_file_path)
-    viewer.plot_input_and_output(str(chips_grid), str(processed_grid))
     file_type = args.input_file_path.suffix
     result_text = combine_result_with_rest(processed_grid, rest_of_file, file_type)
     save_result_as_text(result_text, args.output_dir_path, args.input_file_path)
