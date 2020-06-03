@@ -28,7 +28,7 @@ class UnitTests(unittest.TestCase):
         command = ['python', '-u', f'{main_script_path}', '--ignore-gooey', f'{stdf_file_path}',
                    f'{results_path}',
                    f'{neighbors_file_path}']
-        
+
         with subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                               stderr=subprocess.PIPE) as process:
             process.wait()

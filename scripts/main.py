@@ -70,7 +70,6 @@ def parse_stdf_file(path_to_read_from):
             StdfToGrid.sort_each_chips_row(self.grid)
             self.grid = StdfToGrid.make_square_from_table(self.grid)
             self.grid = ChipsGrid.make_chips_grid_from_grid(self.grid)
-            # print(self.grid)
             nonlocal expected_grid
             expected_grid = self.grid
 
@@ -473,7 +472,7 @@ def get_argument():
 
 
 def get_default_paths():
-    project_root = Path('C:\dev\ChipProduction')
+    project_root = Path('C:\\dev\\ChipProduction')
     default_paths = {'input': project_root / 'resources/example.txt', 'output': project_root / 'results'
         , 'neighbors_table': Path('neighbors_table.json')}
     return default_paths
@@ -481,7 +480,7 @@ def get_default_paths():
 
 if __name__ == '__main__':
     logger = create_logger()
-    logger.info('Starting.')
+    logger.info('Starting Die Cluster algorithm.')
     args = get_argument()
     logger.debug('End of parse arguments.')
     if args.verbose:
@@ -492,4 +491,4 @@ if __name__ == '__main__':
     file_type = args.input_file_path.suffix
     result_text = combine_result_with_rest(processed_grid, rest_of_file, file_type)
     save_result_as_text(result_text, args.output_dir_path, args.input_file_path)
-    logger.info('End.')
+    logger.info('End of Die CLuster algorithm.')
