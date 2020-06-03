@@ -1,10 +1,14 @@
+from itertools import product
+
 import matplotlib.pyplot as plt
+from matplotlib.backends.backend_pdf import PdfPages
 
 
-def plot_input_and_output(input_grid, output_grid):
-    make_table(input_grid)
-    make_table(output_grid)
-    plt.show()
+def plot_input_and_output(input_grid, output_grid, output_dir, input_file_name):
+    with PdfPages(output_dir / f'{input_file_name}_summary.pdf') as pdf:
+        make_summary_file(input_grid, output_grid, output_dir, input_file_name)
+        make_and_save_table(input_grid, pdf, title=f'{short_summary} Wafer before calling the program')
+        make_and_save_table(output_grid, pdf, title=f'Wafer after calling the program')
 
 
 def make_table(grid_text):
