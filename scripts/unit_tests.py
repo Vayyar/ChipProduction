@@ -21,13 +21,14 @@ class UnitTests(unittest.TestCase):
     def test_consistency(self):
         # read last .stdf running result
         # TODO change to Path(__file__)
+        main_script_path = Path(__file__).parent / "main.py"
         stdf_file_path = Path('../resources/N6W014_N6W014-19E5_WS_CP1_-40_20200313_110305.stdf')
         results_path = Path('../unit_tests')
         neighbors_file_path = Path('../resources/neighbors_table.json')
-        command = ['pythonw', '-u', '--ignore-gooey', f'{Path(__file__).parent / "main.py"}', f'{stdf_file_path}',
+        command = ['python', '-u', f'{main_script_path}', '--ignore-gooey', f'{stdf_file_path}',
                    f'{results_path}',
                    f'{neighbors_file_path}']
-        print(command)
+        
         with subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                               stderr=subprocess.PIPE) as process:
             process.wait()
@@ -42,9 +43,8 @@ class UnitTests(unittest.TestCase):
             test_file.write(test_wafer)
         # run this python file on the new .txt file
         output_dir_path = Path(__file__).parents[1] / 'results'
-        command = ['pythonw', '-u', '--ignore-gooey', f'{__file__}', f'{test_file_path}', f'{output_dir_path}',
-                   f'{neighbors_file_path}']
-        print(command)
+        command = ['python', '-u', f'{main_script_path}', '--ignore-gooey', f'{test_file_path}',
+                   f'{output_dir_path}', f'{neighbors_file_path}']
         with subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                               stderr=subprocess.PIPE) as process:
             process.wait()
