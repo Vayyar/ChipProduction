@@ -21,6 +21,10 @@ def make_list_of_files_to_copy():
     return files_to_copy
 
 
+def copy_files_into(copy_into_me, need_copy_paths):
+    list(map(lambda path: shutil.copy(path, copy_into_me), need_copy_paths))
+
+
 if __name__ == '__main__':
     command = ['pyinstaller', '--windowed', '--name', 'DieCluster', '--onefile', 'main.py']
     with subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
