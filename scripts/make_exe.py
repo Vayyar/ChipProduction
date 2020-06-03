@@ -1,15 +1,24 @@
+import shutil
 import subprocess
 from pathlib import Path
-from shutil import copyfile
 
 
-def copy_neighbors_table_to_exe_dir():
-    current_file_path = Path(__file__)
+def make_list_of_files_to_copy():
+    files_to_copy = list()
+    project_root_dir = current_file_path.parents[1]
+    # add neighbors table path
     neighbors_table_filename = 'neighbors_table.json'
-    exe_directory_path = current_file_path.parent / 'dist'
-    neighbors_table_path = current_file_path.parents[1] / f'resources/{neighbors_table_filename}'
-    neighbors_table_destination = exe_directory_path / neighbors_table_filename
-    copyfile(neighbors_table_path, neighbors_table_destination)
+    neighbors_table_path = project_root_dir / f'resources/{neighbors_table_filename}'
+    files_to_copy.append(neighbors_table_path)
+    # Add readme path
+    readme_file_name = 'README.md'
+    readme_file_path = project_root_dir / readme_file_name
+    files_to_copy.append(readme_file_path)
+    # add version file path.
+    version_file_name = 'version.txt'
+    version_file_path = project_root_dir / version_file_name
+    files_to_copy.append(version_file_path)
+    return files_to_copy
 
 
 if __name__ == '__main__':
