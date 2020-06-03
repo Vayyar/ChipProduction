@@ -1,7 +1,9 @@
 from itertools import product
 
 import matplotlib.pyplot as plt
-from matplotlib.backends.backend_pdf import PdfPages
+from PIL import Image
+from PIL import ImageDraw
+from PIL import ImageFont
 
 
 def plot_input_and_output(input_grid, output_grid, output_dir, input_file_name):
