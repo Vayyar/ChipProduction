@@ -5,11 +5,13 @@ from matplotlib.backends.backend_pdf import PdfPages
 
 
 def plot_input_and_output(input_grid, output_grid, output_dir, input_file_name):
-    with PdfPages(output_dir / f'{input_file_name}_summary.pdf') as pdf:
-        short_summary = make_summary_file(input_grid, output_grid, output_dir, input_file_name)
-        make_and_save_table(input_grid, pdf, title=f'Wafer before calling the program')
-        make_and_save_table(output_grid, pdf, title=f'Wafer after calling the program', additional_text=short_summary)
-        make_text_figure(pdf, short_summary)
+    images_paths = [output_dir / f'image_{idx}.jpg' for idx in range(3)]
+    make_and_save_table(images_paths[0], input_grid, title=f'Wafer before calling the program')
+    make_and_save_table(images_paths[2], output_grid, title=f'Wafer after calling the program')
+    short_summary = make_summary_file(input_grid, output_grid, output_dir, input_file_name)
+    make_text_figure(short_summary, images_paths[1])
+    result_image_path = output_dir / f'result_of_{input_file_name}.jpg'
+    merge_images(images_paths, result_image_path)
 
 
 def find_difference_coordinates(input_grid, output_grid):
