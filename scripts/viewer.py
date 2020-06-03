@@ -16,6 +16,12 @@ def plot_input_and_output(input_grid, output_grid, output_dir, input_file_name):
     merge_images(images_paths, result_image_path)
 
 
+def make_text_figure(text, image_path):
+    img = Image.new('RGB', (500, 500), color=(255, 255, 255))
+    draw = ImageDraw.Draw(img)
+    font = ImageFont.truetype("arial.ttf", 25)
+    draw.text((0, 0), text, (0, 0, 0), font=font)
+    img.save(image_path)
 def find_difference_coordinates(input_grid, output_grid):
     grid_of_chars_input = make_grid_of_chars(input_grid)
     grid_of_chars_output = make_grid_of_chars(output_grid)
