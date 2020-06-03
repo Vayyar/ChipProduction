@@ -20,4 +20,9 @@ if __name__ == '__main__':
         print(output)
         if len(err) > 0:
             print(f'{err} error')
-    copy_neighbors_table_to_exe_dir()
+    current_file_path = Path(__file__)
+    paths_of_files_to_copy = make_list_of_files_to_copy()
+    dir_to_compress = current_file_path.parent / 'dist'
+    copy_files_into(dir_to_compress, paths_of_files_to_copy)
+    zip_path = shutil.make_archive('DieCluster', 'zip', dir_to_compress)
+    shutil.copy(zip_path, dir_to_compress)
