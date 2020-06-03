@@ -83,7 +83,7 @@ def make_grid_of_chars(grid_text):
     return [[char for char in row] for row in rows_text]
 
 
-def make_and_save_table(grid_text, pdf, title, additional_text=''):
+def make_and_save_table(figure_path, grid_text, title, additional_text=''):
     cells_text = make_grid_of_chars(grid_text)
     colors = [[get_color(char) for char in row] for row in cells_text]
     figure, ax = plt.subplots()
@@ -92,15 +92,7 @@ def make_and_save_table(grid_text, pdf, title, additional_text=''):
     ax.axis('off')
     ax.text(100, 100, additional_text)
     ax.table(cellText=cells_text, cellColours=colors, loc='center')
-    pdf.savefig(figure)
-
-
-def make_text_figure(pdf, text):
-    figure, ax = plt.subplots()
-    figure.text(.1, .1, text, size=20)
-    ax.axis('tight')
-    ax.axis('off')
-    pdf.savefig(figure)
+    plt.savefig(figure_path)
 
 
 colors_dict = {'.': "w", "1": "g", "X": "r", "Y": "y"}
