@@ -46,8 +46,12 @@ def make_summary_file(input_grid, output_grid, output_dir, input_file_name):
     with open(summary_text_file_path, 'w') as summary_text_file:
         summary_text_file.write(summary)
     return short_summary
+
+
+def make_grid_of_chars(grid_text):
     rows_text = grid_text.split('\n')
-    cells_text = [[char for char in row] for row in rows_text]
+    return [[char for char in row] for row in rows_text]
+
 
 def make_and_save_table(grid_text, pdf, title):
     cells_text = make_grid_of_chars(grid_text)
