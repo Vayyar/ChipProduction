@@ -22,6 +22,25 @@ def make_text_figure(text, image_path):
     font = ImageFont.truetype("arial.ttf", 25)
     draw.text((0, 0), text, (0, 0, 0), font=font)
     img.save(image_path)
+
+
+def merge_images(images_paths, path_for_result):
+    images = [Image.open(x) for x in images_paths]
+    widths, heights = zip(*(i.size for i in images))
+
+    total_width = sum(widths)
+    max_height = max(heights)
+
+    new_im = Image.new('RGB', (total_width, max_height))
+
+    x_offset = 0
+    for im in images:
+        new_im.paste(im, (x_offset, 0))
+        x_offset += im.size[0]
+
+    new_im.save(path_for_result)
+
+
 def find_difference_coordinates(input_grid, output_grid):
     grid_of_chars_input = make_grid_of_chars(input_grid)
     grid_of_chars_output = make_grid_of_chars(output_grid)
