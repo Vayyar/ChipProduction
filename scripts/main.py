@@ -433,7 +433,7 @@ def create_logger():
     file_handler.setFormatter(file_handler_formatter)
     logger_inner_var.addHandler(file_handler)
     console_handler = logging.StreamHandler()
-    console_handler.setLevel(logging.INFO)
+    console_handler.setLevel(logging.ERROR)
     logger_inner_var.addHandler(console_handler)
     return logger_inner_var
 
@@ -453,7 +453,19 @@ def combine_text_file_with_result_grid(wafer_grid, rest_as_template):
     return final_text
 
 
-@Gooey(navigation='TABBED', show_success_modal=False)
+def get_version():
+    version_file_path = Path(__file__).parent / 'version.txt'
+    with open(version_file_path, 'r') as version_file:
+        version_file_content = version_file.read()
+    current_version = version_file_content.split()
+    return current_version
+
+
+version = get_version()
+
+
+@Gooey(navigation='TABBED', show_success_modal=False, program_name='Die Cluster', program_description=f'Version '
+                                                                                                      f'{version}')
 def get_argument():
     parser = GooeyParser()
     default_paths_dict = get_default_paths()
@@ -480,7 +492,7 @@ def get_default_paths():
 
 if __name__ == '__main__':
     logger = create_logger()
-    logger.info('Starting Die Cluster algorithm.')
+    logger.info(f'Starting Die Cluster algorithm version {version}.')
     args = get_argument()
     logger.debug('End of parse arguments.')
     if args.verbose:

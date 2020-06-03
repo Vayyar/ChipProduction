@@ -16,7 +16,7 @@ def make_list_of_files_to_copy():
     files_to_copy.append(readme_file_path)
     # add version file path.
     version_file_name = 'version.txt'
-    version_file_path = project_root_dir / version_file_name
+    version_file_path = current_file_path.parent / version_file_name
     files_to_copy.append(version_file_path)
     return files_to_copy
 
