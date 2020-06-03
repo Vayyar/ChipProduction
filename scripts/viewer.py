@@ -11,7 +11,19 @@ def plot_input_and_output(input_grid, output_grid, output_dir, input_file_name):
         make_and_save_table(output_grid, pdf, title=f'Wafer after calling the program')
 
 
-def make_table(grid_text):
+def find_difference_coordinates(input_grid, output_grid):
+    grid_of_chars_input = make_grid_of_chars(input_grid)
+    grid_of_chars_output = make_grid_of_chars(output_grid)
+    number_of_rows = len(grid_of_chars_input)
+    number_of_columns = len(grid_of_chars_input[0])
+    coordinates_of_difference_list = list()
+    for x_coordinate, y_coordinate in product(range(number_of_rows), range(number_of_columns)):
+        input_cell = grid_of_chars_input[x_coordinate][y_coordinate]
+        output_cell = grid_of_chars_output[x_coordinate][y_coordinate]
+        if input_cell != output_cell:
+            coordinates_of_difference_list.append(f'({x_coordinate},{y_coordinate})')
+    return coordinates_of_difference_list
+
 
 def make_summary_file(input_grid, output_grid, output_dir, input_file_name):
     number_of_fail_chips = input_grid.count('X')
