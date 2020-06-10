@@ -463,7 +463,6 @@ def get_version():
 
 version = get_version()
 
-
 @Gooey(navigation='TABBED', show_success_modal=False, program_name='Die Cluster', program_description=f'Version '
                                                                                                       f'{version}')
 def get_argument():
