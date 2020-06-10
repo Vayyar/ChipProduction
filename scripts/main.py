@@ -113,7 +113,7 @@ def parse_stdf_file(path_to_read_from):
 
 
 def parse_text_file(path_to_read_from):
-    logger.info('Read the file.')
+    logger.info('Read the input wafer text file.')
     with open(path_to_read_from, 'r') as input_file:
         file_content = input_file.read()
     chips_map_as_string, rest_of_text_as_template = separate_un_relevant_text_lines(file_content)
@@ -208,7 +208,7 @@ class ChipsGrid:
     @staticmethod
     def make_chips_grid(map_as_string):
         logger.info('Starting save wafer into memory.')
-        logger.debug('Starting creating a ChipsGrid from wafer text.')
+        logger.debug('Starting save wafer text into memory.')
         map_as_list = map_as_string.split('\n')
         chips_grid_obj = list()
         for row_index, chips_row in enumerate(map_as_list):
@@ -216,7 +216,7 @@ class ChipsGrid:
             for column_index, chip_state in enumerate(chips_row):
                 current_chip = Chip(row_index, column_index, chip_state)
                 chips_grid_obj[-1].append(current_chip)
-        logger.debug('Finish of creating a ChipsGrid from wafer text.')
+        logger.debug('Finish of save wafer text into memory.')
         logger.info('Wafer was saved into memory.')
         return chips_grid_obj
 
@@ -343,7 +343,7 @@ class Chip:
 
 
 def apply_algorithm_on_grid(wafer_grid, neighbors_path):
-    logger.debug('Starting apply the algorithm.')
+    logger.debug('Starting predict who chips are failed.')
     wafer_grid_copy = copy.deepcopy(wafer_grid)
     neighbors_table = make_dict_of_neighbors_threshold(neighbors_path)
     for grid_cell in wafer_grid_copy:
@@ -354,7 +354,7 @@ def apply_algorithm_on_grid(wafer_grid, neighbors_path):
         threshold = neighbors_table[total_number_of_cell_neighbors]
         new_state = ChipState.FAIL_BY_PREDICTION if total_number_of_x_neighbors >= threshold else ChipState.PASS
         grid_cell.state = new_state
-    logger.debug('Finish of apply the algorithm.')
+    logger.debug('Finish of predict who chips are failed.')
     return wafer_grid_copy
 
 
