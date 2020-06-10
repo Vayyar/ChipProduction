@@ -4,8 +4,8 @@ that pass the tests.<br/><br/>
 
 2) For mark chip as fail we look at all its 8 neighbors, <br/>
    And mark the chip as failed iff the number of failed neighbors is <br/>
-   bigger than or equals to some threshold when the threshold is function f:{0,...,8} -> {0,...,8}.<br/>
-<br/>
+   bigger than or equals to some threshold when the threshold is function f:{0,...,8} -> {0,...,8}.<br/><br/>
+   
 3) Parameters:<br/> 
   a) Path for The wafer as text file or .stdf file.<br/>
   b) Path of directory to put the results in it.<br/>
