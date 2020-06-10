@@ -1,3 +1,4 @@
+import csv
 from itertools import product
 
 import matplotlib.pyplot as plt
@@ -10,7 +11,7 @@ def plot_input_and_output(input_grid, output_grid, output_dir, input_file_name):
     images_paths = [output_dir / f'image_{idx}.jpg' for idx in range(3)]
     make_and_save_table(images_paths[0], input_grid, title=f'Wafer before calling the program')
     make_and_save_table(images_paths[2], output_grid, title=f'Wafer after calling the program')
-    short_summary = make_summary_file(input_grid, output_grid, output_dir, input_file_name)
+    short_summary = make_summary(input_grid, output_grid, output_dir, input_file_name)
     make_text_figure(short_summary, images_paths[1])
     result_image_path = output_dir / f'result_of_{input_file_name}.jpg'
     merge_images(images_paths, result_image_path)
@@ -55,7 +56,7 @@ def find_difference_coordinates(input_grid, output_grid):
     return coordinates_of_difference_list
 
 
-def make_summary_file(input_grid, output_grid, output_dir, input_file_name):
+def make_summary(input_grid, output_grid, output_dir, input_file_name):
     number_of_fail_chips = input_grid.count('X')
     number_of_pass_chips = input_grid.count('1')
     number_of_chips = number_of_fail_chips + number_of_pass_chips
@@ -63,18 +64,25 @@ def make_summary_file(input_grid, output_grid, output_dir, input_file_name):
     pass_at_the_end = output_grid.count('1')
     fail_at_the_end = output_grid.count('X') + output_grid.count('Y')
     difference_coordinates = find_difference_coordinates(input_grid, output_grid)
+    difference_coordinates_str = " ".join(difference_coordinates)
     short_summary = f'The wafer contains {number_of_chips} chips.\n' \
                     f'From them {number_of_fail_chips} was failed\n' \
                     f'And {number_of_pass_chips} was pass.\n' \
                     f'We mark as fails some more {failed_by_prediction} chips.\n' \
                     f'Total {fail_at_the_end} was failed.\n' \
                     f'And {pass_at_the_end} was passed.\n'
-    summary = short_summary + \
-              f'The coordinates of chips we mark as failed even they was pass initially are:' \
-              f' {",".join(difference_coordinates)}'
-    summary_text_file_path = output_dir / f'{input_file_name}_summary.txt'
-    with open(summary_text_file_path, 'w') as summary_text_file:
-        summary_text_file.write(summary)
+    summary_file_path = output_dir / f'{input_file_name}_summary.csv'
+    with open(summary_file_path, mode='w') as csv_file:
+        fieldnames = ['File name', 'Total chips', 'Initially failed', 'Initially passed', 'Failed by prediction',
+                      'Total failed',
+                      'Total passed', 'Difference coordinates']
+        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+        writer.writeheader()
+        row_values = [input_file_name, number_of_chips, number_of_fail_chips, number_of_pass_chips,
+                      failed_by_prediction, fail_at_the_end, pass_at_the_end, difference_coordinates_str]
+        rows_dict = {header: value for header, value in zip(fieldnames, row_values)}
+        writer.writerow(rows_dict)
+
     return short_summary
 
 
