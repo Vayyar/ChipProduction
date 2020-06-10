@@ -146,7 +146,7 @@ def separate_un_relevant_text_lines(chips_map_as_str):
     chips_map_part_string = '\n'.join(chips_map_part_list)
     rest_of_the_text = chips_map_as_str.replace(chips_map_part_string, '$wafer')
     rest_of_text_as_template = Template(rest_of_the_text)
-    logger.debug('End of separate wafer from text.')
+    logger.debug('Finish of separate wafer from text.')
     return chips_map_part_string, rest_of_text_as_template
 
 
@@ -220,7 +220,7 @@ class ChipsGrid:
             for column_index, chip_state in enumerate(chips_row):
                 current_chip = Chip(row_index, column_index, chip_state)
                 chips_grid_obj[-1].append(current_chip)
-        logger.debug('End of creating a ChipsGrid from wafer text.')
+        logger.debug('Finish of creating a ChipsGrid from wafer text.')
         logger.info('Wafer was saved into memory.')
         return chips_grid_obj
 
@@ -358,7 +358,7 @@ def apply_algorithm_on_grid(wafer_grid, neighbors_path):
         threshold = neighbors_table[total_number_of_cell_neighbors]
         new_state = ChipState.FAIL_BY_PREDICTION if total_number_of_x_neighbors >= threshold else ChipState.PASS
         grid_cell.state = new_state
-    logger.debug('End of apply the algorithm.')
+    logger.debug('Finish of apply the algorithm.')
     return wafer_grid_copy
 
 
@@ -367,7 +367,7 @@ def make_dict_of_neighbors_threshold(neighbors_path):
     with open(neighbors_path) as neighbors_json_file:
         data_dict = json.load(neighbors_json_file)
     neighbors_dict = {int(key): value for key, value in data_dict.items()}
-    logger.debug('End reading and processing neighbors threshold file.')
+    logger.debug('Finish reading and processing neighbors threshold file.')
     return neighbors_dict
 
     pass
@@ -483,7 +483,7 @@ if __name__ == '__main__':
     logger = create_logger()
     logger.info('Starting Die Cluster algorithm.')
     args = get_argument()
-    logger.debug('End of parse arguments.')
+    logger.debug('Finish of parse arguments.')
     if args.verbose:
         change_all_log_levels_for_debug()
     arguments_validation(args)
@@ -492,4 +492,4 @@ if __name__ == '__main__':
     file_type = args.input_file_path.suffix
     result_text = combine_result_with_rest(processed_grid, rest_of_file, file_type)
     save_result_as_text(result_text, args.output_dir_path, args.input_file_path)
-    logger.info('End of Die CLuster algorithm.')
+    logger.info('Finish of Die CLuster algorithm.')
