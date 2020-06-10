@@ -2,8 +2,6 @@ import copy
 import enum
 import json
 import logging
-# TODO find better solution later.
-import sys
 from collections import Counter
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
@@ -12,8 +10,6 @@ from string import Template
 from gooey import Gooey, GooeyParser
 from pystdf.IO import Parser
 from pystdf.V4 import prr
-
-sys.path.append('..')
 
 logger = logging.getLogger('ChipProductionLogger')
 handler = RotatingFileHandler('ChipProductionLogger.log', maxBytes=100_000, backupCount=1)
@@ -370,8 +366,6 @@ def make_dict_of_neighbors_threshold(neighbors_path):
     logger.debug('Finish reading and processing neighbors threshold file.')
     return neighbors_dict
 
-    pass
-
 
 def save_result_as_text(result_grid, output_directory_path, input_path):
     logger.debug('Saving result as text file.')
@@ -473,7 +467,7 @@ def get_argument():
 
 
 def get_default_paths():
-    project_root = Path('C:\\dev\\ChipProduction')
+    project_root = Path('..')
     default_paths = {'input': project_root / 'resources/example.txt', 'output': project_root / 'results'
         , 'neighbors_table': Path('neighbors_table.json')}
     return default_paths
