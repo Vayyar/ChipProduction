@@ -2,7 +2,6 @@ import copy
 import enum
 import json
 import logging
-# TODO find better solution later.
 import sys
 from collections import Counter
 from logging.handlers import RotatingFileHandler
