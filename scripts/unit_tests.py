@@ -20,7 +20,6 @@ class UnitTests(unittest.TestCase):
 
     def test_consistency(self):
         # read last .stdf running result
-        # TODO change to Path(__file__)
         main_script_path = Path(__file__).parent / "main.py"
         stdf_file_path = Path('../resources/N6W014_N6W014-19E5_WS_CP1_-40_20200313_110305.stdf')
         results_path = Path('../unit_tests')
