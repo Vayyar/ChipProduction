@@ -373,8 +373,6 @@ def make_dict_of_neighbors_threshold(neighbors_path):
     logger.debug('End reading and processing neighbors threshold file.')
     return neighbors_dict
 
-    pass
-
 
 def save_result_as_text(result_grid, output_directory_path, input_path):
     logger.debug('Saving result as text file.')
@@ -449,45 +447,6 @@ def change_all_log_levels_for_debug():
 def combine_result_with_rest(wafer_grid, rest, type_of_file):
     methods_dict = {'.txt': combine_text_file_with_result_grid, '.stdf': combine_text_file_with_result_grid}
     return methods_dict[type_of_file](wafer_grid, rest)
-
-
-"""
-#################################################################################
- ####                   HERE SOME INFRASTRUCTURE FOR THE FUTURE TO WRITE THE
- ####                    RESULT AS .STDF FILE.
- #################################################################################
-from pystdf.Importer import MemoryWriter
-def combine_stdf_file_with_result_grid_future(wafer_grid, rest_as_parser):
-    class StdfToGrid(MemoryWriter):
-
-        def after_begin(self):
-            output_file_path = get_output_file_path(args.output_dir_path, args.input_file_path)
-            if Path.exists(output_file_path):
-                Path.unlink(output_file_path)
-            self.output_file = open(output_file_path, 'a')
-
-        def before_send(self, dataSource):
-            rectype, fields = dataSource
-            # print("dataSource = " + str(dataSource))
-            if rectype == prr:
-                x_coordinate = fields[prr.X_COORD]
-                y_coordinate = fields[prr.Y_COORD]
-                if wafer_grid.map_as_grid[y_coordinate][x_coordinate].state == ChipState.FAIL_BY_PREDICTION:
-                    fields[prr.PART_FLG] |= 8
-            text = str(dataSource)
-            # print(text)
-            self.output_file.write(text)
-
-        def after_complete(self):
-            self.output_file.close()
-
-    with open(args.input_file_path, 'rb') as stdf_file:
-        parser_object = Parser(inp=stdf_file)
-        # parser_object.addSink(StdfToGrid)
-        parser_object.addSink(MemoryWriter())
-        parser_object.parse()
-        # print(parser_object)
-"""
 
 
 def combine_text_file_with_result_grid(wafer_grid, rest_as_template):
