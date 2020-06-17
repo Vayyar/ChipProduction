@@ -430,7 +430,7 @@ def create_logger():
     file_handler.setFormatter(file_handler_formatter)
     logger_inner_var.addHandler(file_handler)
     console_handler = logging.StreamHandler()
-    console_handler.setLevel(logging.ERROR)
+    console_handler.setLevel(logging.INFO)
     logger_inner_var.addHandler(console_handler)
     return logger_inner_var
 
