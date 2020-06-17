@@ -14,20 +14,16 @@ class UnitTests(unittest.TestCase):
         self.neighbors_filename = 'neighbors_table.json'
         self.wafer_initial_states = ['X', '1', '.']
 
-        ##########################################################################################
-        # ############                   ASK THIS IN THE MEETING                        ##########
-        #          TEST FOR ILLUSTRATE ALGORITHMIC QUESTION                  #
-
     def test_consistency(self):
         # read last .stdf running result
-        # TODO change to Path(__file__)
+        main_script_path = Path(__file__).parent / "main.py"
         stdf_file_path = Path('../resources/N6W014_N6W014-19E5_WS_CP1_-40_20200313_110305.stdf')
         results_path = Path('../unit_tests')
         neighbors_file_path = Path('../resources/neighbors_table.json')
-        command = ['pythonw', '-u', '--ignore-gooey', f'{Path(__file__).parent / "main.py"}', f'{stdf_file_path}',
+        command = ['python', '-u', f'{main_script_path}', '--ignore-gooey', f'{stdf_file_path}',
                    f'{results_path}',
                    f'{neighbors_file_path}']
-        print(command)
+
         with subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                               stderr=subprocess.PIPE) as process:
             process.wait()
@@ -42,16 +38,12 @@ class UnitTests(unittest.TestCase):
             test_file.write(test_wafer)
         # run this python file on the new .txt file
         output_dir_path = Path(__file__).parents[1] / 'results'
-        command = ['pythonw', '-u', '--ignore-gooey', f'{__file__}', f'{test_file_path}', f'{output_dir_path}',
-                   f'{neighbors_file_path}']
-        print(command)
+        command = ['python', '-u', f'{main_script_path}', '--ignore-gooey', f'{test_file_path}',
+                   f'{output_dir_path}', f'{neighbors_file_path}']
         with subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                               stderr=subprocess.PIPE) as process:
             process.wait()
-            # output, err = process.communicate()
-            # if len(err) > 0:
-            #   logger.error(err)
-            # logger.error(err)
+
         output_file_path = main.get_output_file_path(output_dir_path, test_file_path)
         with open(output_file_path, 'r') as result_from_text_file:
             result_from_text_file_wafer_str = result_from_text_file.read()
@@ -69,8 +61,6 @@ class UnitTests(unittest.TestCase):
                                             "XYY\n" \
                                             "..."
         self.a_tester(self.neighbors_filename, input_text, expected_wafer_text_first_option)
-
-    # #################################################################################################
 
     def test_ignore_small_noises(self):
         input_text = ".\n" \
@@ -185,7 +175,6 @@ class UnitTests(unittest.TestCase):
 
     # Takes 2 seconds
     def test_same_amount_xs_no_more_1s_same_amount_of_dots_no_other_chars(self):
-        # TODO put here smaller numbers for fast running
         dim1, dim2 = 3, 3
         for input_text in UnitTests.input_generator(dim1, dim2):
             self.assert_that_algorithm_return_making_sense_result(input_text)
