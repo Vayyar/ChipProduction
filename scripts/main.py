@@ -504,4 +504,4 @@ if __name__ == '__main__':
     file_type = args.input_file_path.suffix
     result_text = combine_result_with_rest(processed_grid, rest_of_file, file_type)
     save_result_as_text(result_text, args.output_dir_path, args.input_file_path)
-    logger.info('Finish of Die CLuster algorithm.')
+    logger.info('Finish of Die Cluster algorithm.')
