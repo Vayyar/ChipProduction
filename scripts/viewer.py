@@ -64,7 +64,7 @@ def make_summary(input_grid, output_grid, output_dir, input_file_name):
     pass_at_the_end = output_grid.count('1')
     fail_at_the_end = output_grid.count('X') + output_grid.count('Y')
     difference_coordinates = find_difference_coordinates(input_grid, output_grid)
-    difference_coordinates_str = " ".join(difference_coordinates)
+    difference_coordinates_str = ":".join(difference_coordinates)
     short_summary = f'The wafer contains {number_of_chips} chips.\n' \
                     f'From them {number_of_fail_chips} was failed\n' \
                     f'And {number_of_pass_chips} was pass.\n' \
