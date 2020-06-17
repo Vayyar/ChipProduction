@@ -421,15 +421,17 @@ class WrongArgumentsException(Exception):
         return f'WrongArgumentException!!!  {self.message if self.message is not None else ""}'
 
 
-def create_logger():
+def create_logger(file_name='ChipProductionLogger.log'):
     logger_inner_var = logging.getLogger('ChipProduction')
     logger_inner_var.setLevel(logging.DEBUG)
-    file_handler = logging.FileHandler('ChipProductionLogger.log')
+    file_handler = logging.FileHandler(file_name)
     file_handler_formatter = logging.Formatter(f'%(levelname)s - %(funcName)s - %(message)s\n')
 
     file_handler.setFormatter(file_handler_formatter)
     logger_inner_var.addHandler(file_handler)
     console_handler = logging.StreamHandler()
+    console_handler_formatter = logging.Formatter(f'%(levelname)s - %(message)s')
+    console_handler.setFormatter(console_handler_formatter)
     console_handler.setLevel(logging.INFO)
     logger_inner_var.addHandler(console_handler)
     return logger_inner_var
