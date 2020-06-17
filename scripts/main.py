@@ -131,7 +131,7 @@ def separate_un_relevant_text_lines(chips_map_as_str):
     :param chips_map_as_str: content of a wafer file as .txt
     :return: The wafer grid text that contains . X 1 only and template of all the other stuff.
     """
-    logger.debug('Starting extract wafer from text.')
+    logger.debug('In parse input wafer file: Starting extract wafer from text.')
     chips_map_striped = chips_map_as_str.strip()
     file_lines_list = chips_map_striped.split('\n')
     file_lines_striped_list = [line.strip() for line in file_lines_list]
@@ -144,7 +144,7 @@ def separate_un_relevant_text_lines(chips_map_as_str):
     chips_map_part_string = '\n'.join(chips_map_part_list)
     rest_of_the_text = chips_map_as_str.replace(chips_map_part_string, '$wafer')
     rest_of_text_as_template = Template(rest_of_the_text)
-    logger.debug('Finish of separate wafer from text.')
+    logger.debug('In parse input wafer file: Finish of separate wafer from text.')
     return chips_map_part_string, rest_of_text_as_template
 
 
@@ -345,7 +345,7 @@ class Chip:
 
 
 def apply_algorithm_on_grid(wafer_grid, neighbors_path):
-    logger.debug('Starting predict who chips are failed.')
+    logger.debug('Starting apply the algorithm for predict who chips are failed.')
     wafer_grid_copy = copy.deepcopy(wafer_grid)
     neighbors_table = make_dict_of_neighbors_threshold(neighbors_path)
     for grid_cell in wafer_grid_copy:
@@ -356,21 +356,21 @@ def apply_algorithm_on_grid(wafer_grid, neighbors_path):
         threshold = neighbors_table[total_number_of_cell_neighbors]
         new_state = ChipState.FAIL_BY_PREDICTION if total_number_of_x_neighbors >= threshold else ChipState.PASS
         grid_cell.state = new_state
-    logger.debug('Finish of predict who chips are failed.')
+    logger.debug('Finish apply the algorithm for predict who chips are failed.')
     return wafer_grid_copy
 
 
 def make_dict_of_neighbors_threshold(neighbors_path):
-    logger.debug('Start reading neighbors threshold file.')
+    logger.debug('Start reading input neighbors threshold file.')
     with open(neighbors_path) as neighbors_json_file:
         data_dict = json.load(neighbors_json_file)
     neighbors_dict = {int(key): value for key, value in data_dict.items()}
-    logger.debug('Finish reading and processing neighbors threshold file.')
+    logger.debug('Finish reading and processing input neighbors threshold file.')
     return neighbors_dict
 
 
 def save_result_as_text(result_grid, output_directory_path, input_path):
-    logger.debug('Saving result as text file.')
+    logger.debug('Saving result wafer as text file.')
     grid_text = str(result_grid)
     output_file_path = get_output_file_path(output_directory_path, input_path)
     with open(output_file_path, 'w') as output_file:
@@ -388,7 +388,7 @@ def choose_output_filename(input_path):
 
 
 def arguments_validation(arguments):
-    logger.debug('Now validating input arguments.')
+    logger.debug('Starting validating input arguments.')
     for attribute, attribute_argument in vars(arguments).items():
         if not isinstance(attribute_argument, Path):
             continue
@@ -400,7 +400,6 @@ def arguments_validation(arguments):
             raise WrongArgumentsException(f"The path {attribute_argument} is a directory while we expect a file")
         if 'file' in attribute and attribute_argument.is_dir():
             raise WrongArgumentsException(f"The path {attribute_argument} is a directory while we expect a file")
-        logger.debug('All arguments are valid.')
         if 'file' in attribute:
             if attribute_argument.is_dir():
                 raise WrongArgumentsException(f"The path {attribute_argument} is a directory while we expect a file")
@@ -408,6 +407,7 @@ def arguments_validation(arguments):
             if 'input' in attribute and attribute_argument.suffix not in supported_file_types:
                 raise WrongArgumentsException(f"The type of the file {attribute_argument.name} is not supported"
                                               f" we support only .txt and .stdf file types.")
+        logger.debug('Finish validating input arguments.')
 
 
 class WrongArgumentsException(Exception):
@@ -466,6 +466,7 @@ version = get_version()
 @Gooey(navigation='TABBED', show_success_modal=False, program_name='Die Cluster', program_description=f'Version '
                                                                                                       f'{version}')
 def get_argument():
+    logger.debug('Starting of getting the input arguments.')
     parser = GooeyParser()
     default_paths_dict = get_default_paths()
     parser.add_argument('input_file_path', metavar='input file path', widget='FileChooser',
@@ -479,6 +480,7 @@ def get_argument():
                         help='path for table file.')
     parser.add_argument("-v", "--verbose", help="increase output verbosity", action="store_true")
     args = parser.parse_args()
+    logger.debug('Finish of getting the input arguments.')
     return args
 
 
@@ -493,7 +495,6 @@ if __name__ == '__main__':
     logger = create_logger()
     logger.info(f'Starting Die Cluster algorithm version {version}.')
     args = get_argument()
-    logger.debug('Finish of parse arguments.')
     if args.verbose:
         change_all_log_levels_for_debug()
     arguments_validation(args)
