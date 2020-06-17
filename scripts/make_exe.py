@@ -8,7 +8,7 @@ def make_list_of_files_to_copy():
     project_root_dir = current_file_path.parents[1]
     # add neighbors table path
     neighbors_table_filename = 'neighbors_table.json'
-    neighbors_table_path = project_root_dir / f'resources/{neighbors_table_filename}'
+    neighbors_table_path = project_root_dir / 'resources'/f'{neighbors_table_filename}'
     files_to_copy.append(neighbors_table_path)
     # Add readme path
     readme_file_name = 'README.md'
@@ -39,3 +39,4 @@ if __name__ == '__main__':
     copy_files_into(dir_to_compress, paths_of_files_to_copy)
     zip_path = shutil.make_archive('DieCluster', 'zip', dir_to_compress)
     shutil.copy(zip_path, dir_to_compress)
+
