@@ -113,7 +113,7 @@ def parse_stdf_file(path_to_read_from):
 
 
 def parse_text_file(path_to_read_from):
-    logger.info('Read the file.')
+    logger.info('Read the input wafer text file.')
     with open(path_to_read_from, 'r') as input_file:
         file_content = input_file.read()
     chips_map_as_string, rest_of_text_as_template = separate_un_relevant_text_lines(file_content)
@@ -142,7 +142,7 @@ def separate_un_relevant_text_lines(chips_map_as_str):
     chips_map_part_string = '\n'.join(chips_map_part_list)
     rest_of_the_text = chips_map_as_str.replace(chips_map_part_string, '$wafer')
     rest_of_text_as_template = Template(rest_of_the_text)
-    logger.debug('End of separate wafer from text.')
+    logger.debug('Finish of separate wafer from text.')
     return chips_map_part_string, rest_of_text_as_template
 
 
@@ -208,7 +208,7 @@ class ChipsGrid:
     @staticmethod
     def make_chips_grid(map_as_string):
         logger.info('Starting save wafer into memory.')
-        logger.debug('Starting creating a ChipsGrid from wafer text.')
+        logger.debug('Starting save wafer text into memory.')
         map_as_list = map_as_string.split('\n')
         chips_grid_obj = list()
         for row_index, chips_row in enumerate(map_as_list):
@@ -216,7 +216,7 @@ class ChipsGrid:
             for column_index, chip_state in enumerate(chips_row):
                 current_chip = Chip(row_index, column_index, chip_state)
                 chips_grid_obj[-1].append(current_chip)
-        logger.debug('End of creating a ChipsGrid from wafer text.')
+        logger.debug('Finish of save wafer text into memory.')
         logger.info('Wafer was saved into memory.')
         return chips_grid_obj
 
@@ -343,7 +343,7 @@ class Chip:
 
 
 def apply_algorithm_on_grid(wafer_grid, neighbors_path):
-    logger.debug('Starting apply the algorithm.')
+    logger.debug('Starting predict who chips are failed.')
     wafer_grid_copy = copy.deepcopy(wafer_grid)
     neighbors_table = make_dict_of_neighbors_threshold(neighbors_path)
     for grid_cell in wafer_grid_copy:
@@ -354,7 +354,7 @@ def apply_algorithm_on_grid(wafer_grid, neighbors_path):
         threshold = neighbors_table[total_number_of_cell_neighbors]
         new_state = ChipState.FAIL_BY_PREDICTION if total_number_of_x_neighbors >= threshold else ChipState.PASS
         grid_cell.state = new_state
-    logger.debug('End of apply the algorithm.')
+    logger.debug('Finish of predict who chips are failed.')
     return wafer_grid_copy
 
 
@@ -363,10 +363,8 @@ def make_dict_of_neighbors_threshold(neighbors_path):
     with open(neighbors_path) as neighbors_json_file:
         data_dict = json.load(neighbors_json_file)
     neighbors_dict = {int(key): value for key, value in data_dict.items()}
-    logger.debug('End reading and processing neighbors threshold file.')
+    logger.debug('Finish reading and processing neighbors threshold file.')
     return neighbors_dict
-
-    pass
 
 
 def save_result_as_text(result_grid, output_directory_path, input_path):
@@ -425,7 +423,8 @@ def create_logger():
     logger_inner_var = logging.getLogger('ChipProduction')
     logger_inner_var.setLevel(logging.DEBUG)
     file_handler = logging.FileHandler('ChipProductionLogger.log')
-    file_handler_formatter = logging.Formatter(f'%(funcName)s - %(levelname)s - %(message)s')
+    file_handler_formatter = logging.Formatter(f'%(levelname)s - %(funcName)s - %(message)s\n')
+
     file_handler.setFormatter(file_handler_formatter)
     logger_inner_var.addHandler(file_handler)
     console_handler = logging.StreamHandler()
@@ -489,7 +488,7 @@ if __name__ == '__main__':
     logger = create_logger()
     logger.info(f'Starting Die Cluster algorithm version {version}.')
     args = get_argument()
-    logger.debug('End of parse arguments.')
+    logger.debug('Finish of parse arguments.')
     if args.verbose:
         change_all_log_levels_for_debug()
     arguments_validation(args)
@@ -498,4 +497,4 @@ if __name__ == '__main__':
     file_type = args.input_file_path.suffix
     result_text = combine_result_with_rest(processed_grid, rest_of_file, file_type)
     save_result_as_text(result_text, args.output_dir_path, args.input_file_path)
-    logger.info('End of Die CLuster algorithm.')
+    logger.info('Finish of Die CLuster algorithm.')
