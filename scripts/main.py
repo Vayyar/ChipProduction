@@ -481,9 +481,9 @@ def get_argument():
 
 
 def get_default_paths():
-    project_root = Path('..')
-    default_paths = {'input': project_root / 'resources/example.txt', 'output': project_root / 'results'
-        , 'neighbors_table': Path('neighbors_table.json')}
+    cwd = Path(__file__).parent
+    default_paths = {'input': cwd / 'example.txt', 'output': cwd / 'results', 'neighbors_table': Path(
+        'neighbors_table.json')}
     return default_paths
 
 
