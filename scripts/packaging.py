@@ -31,7 +31,7 @@ def validate_config(config):
     logger.debug('Start validate config arguments.')
     for key in config:
         path = Path(config[key])
-        if key in {'temp_dir_path', 'artifacts_package_file_path'}:
+        if key in {'temp_dir_path', 'artifacts_package_file_path', 'exe_file_path'}:
             continue
         if 'path' in key:
             if not Path.exists(path):
