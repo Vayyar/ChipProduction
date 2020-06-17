@@ -16,7 +16,6 @@ that pass the tests.<br/><br/>
 4) Running example: <br/>
    a) from command line:<br/>
       'python main.py --ignore-gooey ../resources/N6W014.0V-24.txt ../results ../resources/neighbors_table.json'<br/>
-   b) 
    
 5) Program steps:<br/>
    a) Validate the input parameters.<br/>
