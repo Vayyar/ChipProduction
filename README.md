@@ -13,10 +13,11 @@ Input Parameters:<br/>
      {"0": 1, "1": 1, "2": 1, "3": 2, "4": 3, "5": 3, "6": 4, "7": 5, "8": 6}<br/>    here for example in "0": 1  "0" means 0 neighbors        case and 1 is the threshold.<br/><br/>
       
 Running example: <br/>
-   From command line:<br/>
+   1) From command line:<br/>
       'python main.py --ignore-gooey ../resources/N6W014.0V-24.txt ../results ../resources/neighbors_table.json'<br/>
-   From gooey:
+   2) From gooey:
        Double click on DieCluster.exe file, now you see this window:
+       
        
    
 Program steps:<br/>
