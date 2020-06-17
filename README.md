@@ -17,7 +17,9 @@ Running example: <br/>
       'python main.py --ignore-gooey ../resources/N6W014.0V-24.txt ../results ../resources/neighbors_table.json'<br/>
    2) From gooey:
        Double click on DieCluster.exe file, now you see this window:
-       
+       <p align="center">
+            <img                             src="https://github.com/Vayyar/ChipProduction/blob/dev_22_readme/Readme_images/Gooey%20window%20screenshot%20%20start.png" width="350" title="hover text" alt="screen shot of gooey window                start.">
+      </p>
        
    
 Program steps:<br/>
