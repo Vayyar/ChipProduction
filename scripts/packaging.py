@@ -27,6 +27,22 @@ def make_config():
     return config
 
 
+def validate_config(config):
+    logger.debug('Start validate config arguments.')
+    for key in config:
+        path = Path(config[key])
+        if key in {'temp_dir_path', 'artifacts_package_file_path'}:
+            continue
+        if 'path' in key:
+            if not Path.exists(path):
+                raise Exception(f"The path {path} under name {key} in config doesn't exist")
+        if 'file' in key and not Path.is_file(path):
+            raise Exception(f"{path} isn't a file")
+        if ('dir' in key or 'directory' in key) and not Path.is_dir(path):
+            raise Exception(f"{path} isn't a dir")
+    logger.debug('End validate config arguments.')
+
+
 def make_list_of_files_to_copy(config):
     files_to_copy = [config["neighbors_table_file_path"], config["readme_file_path"],
                      config["version_file_path"], config["exe_file_path"]]
