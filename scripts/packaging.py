@@ -1,3 +1,4 @@
+import json
 import shutil
 import subprocess
 import sys
@@ -5,21 +6,17 @@ import traceback
 from pathlib import Path
 
 
-def make_list_of_files_to_copy(cwd):
-    files_to_copy = list()
-    project_root_dir = cwd.parent
-    # add neighbors table path
-    neighbors_table_filename = 'neighbors_table.json'
-    neighbors_table_path = project_root_dir / 'resources' / f'{neighbors_table_filename}'
-    files_to_copy.append(neighbors_table_path)
-    # Add readme path
-    readme_file_name = 'README.md'
-    readme_file_path = project_root_dir / readme_file_name
-    files_to_copy.append(readme_file_path)
-    # add version file path.
-    version_file_name = 'version.txt'
-    version_file_path = cwd / version_file_name
-    files_to_copy.append(version_file_path)
+def make_config():
+    cwd = Path(__file__).parent
+    config_path = f'{cwd}/packaging_config.json'
+    with open(config_path) as config_json_file:
+        config = json.load(config_json_file)
+    return config
+
+
+def make_list_of_files_to_copy(config):
+    files_to_copy = [config["neighbors_table_path"], config["readme_file_path"],
+                     config["version_file_path"], config["exe_file_path"]]
     return files_to_copy
 
 
@@ -45,21 +42,21 @@ def create_exe_file():
         print(line)
 
 
-def copy_all_files_into_exe_dir(cwd):
-    paths_of_files_to_copy = make_list_of_files_to_copy(cwd)
-    directory_to_compress = cwd / 'dist'
+def copy_all_files_into_exe_dir(config):
+    paths_of_files_to_copy = make_list_of_files_to_copy(config)
+    directory_to_compress = Path(config['.temp_path'])
+    if not Path.exists(directory_to_compress):
+        Path.mkdir(directory_to_compress)
     copy_files_into(directory_to_compress, paths_of_files_to_copy)
     return directory_to_compress
 
 
-def make_archive(cwd, directory_to_compress):
-    print(cwd)
-    print(directory_to_compress)
-    shutil.make_archive(cwd / 'DieCluster', 'zip', directory_to_compress)
+def make_archive(artifact_path, directory_to_compress):
+    shutil.make_archive(artifact_path, 'zip', directory_to_compress)
 
 
 if __name__ == '__main__':
+    config_dict = make_config()
     create_exe_file()
-    cwd = Path(__file__).parent
-    dir_to_compress = copy_all_files_into_exe_dir(cwd)
-    make_archive(cwd, dir_to_compress)
+    dir_to_compress = copy_all_files_into_exe_dir(config_dict)
+    make_archive(config_dict['.artifacts_package_path'], dir_to_compress)
