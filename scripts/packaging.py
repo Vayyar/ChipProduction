@@ -5,6 +5,8 @@ import sys
 import traceback
 from pathlib import Path
 
+import main
+
 
 def make_config():
     """
@@ -26,7 +28,7 @@ def make_config():
 
 
 def make_list_of_files_to_copy(config):
-    files_to_copy = [config["neighbors_table_path"], config["readme_file_path"],
+    files_to_copy = [config["neighbors_table_file_path"], config["readme_file_path"],
                      config["version_file_path"], config["exe_file_path"]]
     return files_to_copy
 
@@ -56,12 +58,12 @@ def create_exe_file():
         print(line)
 
 
-def copy_all_files_into_exe_dir(config):
+def copy_all_files_into_one_dir(config):
     logger.info('Starting copy all files into 1 dir.')
     paths_of_files_to_copy = make_list_of_files_to_copy(config)
-    directory_to_compress = Path(config['.temp_path'])
+    directory_to_compress = Path(config['temp_dir_path'])
     if not Path.exists(directory_to_compress):
-        Path.mkdir(directory_to_compress)
+        Path.mkdir(directory_to_compress, parents=True)
     copy_files_into(directory_to_compress, paths_of_files_to_copy)
     logger.info('End copy all files into 1 dir.')
     return directory_to_compress
@@ -76,6 +78,7 @@ def make_archive(artifact_path, directory_to_compress):
 if __name__ == '__main__':
     logger = main.create_logger(file_name='Packaging logger')
     config_dict = make_config()
+    validate_config(config_dict)
     create_exe_file()
-    dir_to_compress = copy_all_files_into_exe_dir(config_dict)
-    make_archive(config_dict['.artifacts_package_path'], dir_to_compress)
+    dir_to_compress = copy_all_files_into_one_dir(config_dict)
+    make_archive(config_dict['artifacts_package_file_path'], dir_to_compress)
