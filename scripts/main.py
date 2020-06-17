@@ -484,8 +484,8 @@ def get_argument():
 
 def get_default_paths():
     cwd = Path(__file__).parent
-    default_paths = {'input': cwd / 'example.txt', 'output': cwd / 'results', 'neighbors_table': Path(
-        'neighbors_table.json')}
+    default_paths = {'input': cwd / 'example.txt', 'output': cwd / 'results',
+                     'neighbors_table': cwd / 'neighbors_table.json'}
     return default_paths
 
 
