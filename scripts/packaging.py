@@ -7,6 +7,15 @@ from pathlib import Path
 
 
 def make_config():
+    """
+    The json file should contains
+    "temp_dir_path": "relative path for Byproducts",
+    "artifacts_package_file_path": "relative path for artifacts",
+    "neighbors_table_file_path":  "relative path for neighbors json file",
+    "readme_file_path": "relative path for Readme file",
+    "version_file_path": "relative path for version.txt",
+    "exe_file_path": "where the exe initially will be created by packaging"
+    """
     cwd = Path(__file__).parent
     config_path = f'{cwd}/packaging_config.json'
     with open(config_path) as config_json_file:
