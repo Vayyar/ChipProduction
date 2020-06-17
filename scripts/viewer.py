@@ -72,7 +72,7 @@ def make_summary(input_grid, output_grid, output_dir, input_file_name):
                     f'Total {fail_at_the_end} was failed.\n' \
                     f'And {pass_at_the_end} was passed.\n'
     summary_file_path = output_dir / f'{input_file_name}_summary.csv'
-    with open(summary_file_path, mode='w') as csv_file:
+    with open(summary_file_path, mode='w', newline='') as csv_file:
         fieldnames = ['File name', 'Total chips', 'Initially failed', 'Initially passed', 'Failed by prediction',
                       'Total failed',
                       'Total passed', 'Difference coordinates']
