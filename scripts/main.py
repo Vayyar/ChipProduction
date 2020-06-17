@@ -454,7 +454,7 @@ def get_version():
     version_file_path = Path(__file__).parent / 'version.txt'
     with open(version_file_path, 'r') as version_file:
         version_file_content = version_file.read()
-    current_version = version_file_content.split()
+    current_version = version_file_content.strip()
     return current_version
 
 
