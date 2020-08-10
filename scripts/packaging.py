@@ -2,6 +2,7 @@ import json
 import shutil
 import subprocess
 import sys
+import time
 import traceback
 from pathlib import Path
 
@@ -23,15 +24,21 @@ def make_config():
     config_path = f'{cwd}/packaging_config.json'
     with open(config_path) as config_json_file:
         config = json.load(config_json_file)
+    config = {key: transform_to_path_obj_if_its_path(key, value) for key, value in config.items()}
     logger.debug('End load config into memory.')
     return config
+
+
+def transform_to_path_obj_if_its_path(name, string):
+    return Path(string) if 'path' in name else string
 
 
 def validate_config(config):
     logger.debug('Start validate config arguments.')
     for key in config:
         path = Path(config[key])
-        if key in {'temp_dir_path', 'artifacts_package_file_path', 'exe_file_path', 'requirements_file_path'}:
+        if key in {'temp_dir_path', 'artifacts_package_file_path', 'exe_file_path',
+                   'requirements_file_path', 'intermediate_results_path'}:
             continue
         if 'path' in key:
             if not Path.exists(path):
@@ -53,12 +60,34 @@ def copy_files_into(copy_into_me, need_copy_paths):
     list(map(lambda path: shutil.copy(path, copy_into_me), need_copy_paths))
 
 
-def create_exe_file():
+class PathDoesntExistsException(Exception):
+    pass
+
+
+def wait_for_path_to_exists(path):
+    counter = 0
+    time_to_wait = 0.01
+    maximum_time_to_wait = 2
+    while not Path.exists(path) and counter < maximum_time_to_wait:
+        time.sleep(time_to_wait)
+        counter += time_to_wait
+    if counter >= maximum_time_to_wait:
+        logger.error(f"The path {path} was not created")
+        raise PathDoesntExistsException()
+
+
+def create_exe_file(intermediate_results_path):
     logger.info('Starting create 1 exe from the project')
-    command = ['pyinstaller', '--windowed', '--name', 'DieCluster', '--onefile', 'main.py']
+    if not Path.exists(intermediate_results_path):
+        Path.mkdir(intermediate_results_path, parents=True)
+        wait_for_path_to_exists(intermediate_results_path)
+    cwd = Path(__file__).parent
+    command = f'cd {cwd}/{intermediate_results_path} && pyinstaller --windowed --name DieCluster --onefile ' \
+              f'{cwd}/main.py'
     try:
         with subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                              stderr=subprocess.PIPE) as process:
+                              stderr=subprocess.PIPE, shell=True) as process:
+            process.wait(timeout=100)
             output, err = process.communicate()
             print(output)
             if len(err) > 0:
@@ -80,6 +109,7 @@ def copy_all_files_into_one_dir(config):
     directory_to_compress = Path(config['temp_dir_path'])
     if not Path.exists(directory_to_compress):
         Path.mkdir(directory_to_compress, parents=True)
+        wait_for_path_to_exists(directory_to_compress)
     copy_files_into(directory_to_compress, paths_of_files_to_copy)
     logger.info('End copy all files into 1 dir.')
     return directory_to_compress
@@ -167,6 +197,6 @@ if __name__ == '__main__':
     validate_config(config_dict)
     ask_for_version(config_dict)
     make_requirements_file()
-    create_exe_file()
+    create_exe_file(config_dict['intermediate_results_path'])
     dir_to_compress = copy_all_files_into_one_dir(config_dict)
     make_archive(config_dict['artifacts_package_file_path'], dir_to_compress)

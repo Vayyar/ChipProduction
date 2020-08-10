@@ -4,5 +4,6 @@
   "neighbors_table_file_path":  "../resources/neighbors_table.json",
   "readme_file_path": "../README.md",
   "version_file_path": "version.txt",
-  "exe_file_path": "./dist/DieCluster.exe"
+  "exe_file_path": "../results/intermediate/dist/DieCluster.exe",
+  "intermediate_results_path": "../results/intermediate"
 }
