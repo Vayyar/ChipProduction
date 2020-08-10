@@ -91,10 +91,72 @@ def make_archive(artifact_path, directory_to_compress):
     logger.info('End make zip from all files.')
 
 
+def get_version(version_file_path):
+    with open(version_file_path, 'r') as version_file:
+        version = version_file.read()
+    version_striped = version.strip()
+    return version_striped
+
+
+def is_invalid_value(value, options):
+    return value not in options
+
+
+class InvalidInputException(Exception):
+    pass
+
+
+def handle_invalid_answer(answer):
+    logger.error(f'Your answer ({answer}) is invalid.')
+    raise InvalidInputException()
+
+
+def translate_place_from_str_to_int(place_to_update_str):
+    translation_dict = {'h': 0, 'm': 1, 'l': 2}
+    return translation_dict[place_to_update_str]
+
+
+def calculate_new_version(current_version, place_to_update_str):
+    version_list = current_version.split('.')
+    place_to_update_int = translate_place_from_str_to_int(place_to_update_str)
+    version_list_updated = version_list[0: place_to_update_int] + [str(int(version_list[place_to_update_int]) + 1)] \
+                           + ['0' for _ in range(place_to_update_int + 1, 3)]
+    version_list_updated_of_str = [str(element) for element in version_list_updated]
+    version_as_str = '.'.join(version_list_updated_of_str)
+    return version_as_str
+
+
+def update_version(version_file_path, current_version, place_to_update_str):
+    new_version = calculate_new_version(current_version, place_to_update_str)
+    logger.info(f'The new version is {new_version}')
+    with open(version_file_path, 'w') as version_file:
+        version_file.write(new_version)
+
+
+def input_validation(answer, options):
+    if is_invalid_value(answer, options):
+        handle_invalid_answer(answer)
+
+
+def ask_for_version(config):
+    version_file_path = config["version_file_path"]
+    current_version = get_version(version_file_path)
+    logger.info(f'The current version is {current_version} are you want to update version? (y \\ n).')
+    is_want_to_update = input()
+    input_validation(is_want_to_update, options={'y', 'n'})
+    if is_want_to_update == 'n':
+        return
+    logger.info(f'Which of the 3 are you want to update (h/m/l)?.')
+    place_to_update = input()
+    input_validation(place_to_update, options={'h', 'm', 'l'})
+    update_version(version_file_path, current_version, place_to_update)
+
+
 if __name__ == '__main__':
     logger = main.create_logger(file_name='Packaging logger')
     config_dict = make_config()
     validate_config(config_dict)
+    ask_for_version(config_dict)
     create_exe_file()
     dir_to_compress = copy_all_files_into_one_dir(config_dict)
     make_archive(config_dict['artifacts_package_file_path'], dir_to_compress)
