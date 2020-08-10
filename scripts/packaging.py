@@ -31,7 +31,7 @@ def validate_config(config):
     logger.debug('Start validate config arguments.')
     for key in config:
         path = Path(config[key])
-        if key in {'temp_dir_path', 'artifacts_package_file_path', 'exe_file_path'}:
+        if key in {'temp_dir_path', 'artifacts_package_file_path', 'exe_file_path', 'requirements_file_path'}:
             continue
         if 'path' in key:
             if not Path.exists(path):
@@ -45,7 +45,7 @@ def validate_config(config):
 
 def make_list_of_files_to_copy(config):
     files_to_copy = [config["neighbors_table_file_path"], config["readme_file_path"],
-                     config["version_file_path"], config["exe_file_path"]]
+                     config["version_file_path"], config["exe_file_path"], '.\\requirements.txt']
     return files_to_copy
 
 
@@ -152,11 +152,21 @@ def ask_for_version(config):
     update_version(version_file_path, current_version, place_to_update)
 
 
+def make_requirements_file():
+    logger.info('Start creating requirements.txt file.')
+    cwd = Path(__file__).parent
+    command = ['pipreqs', str(cwd)]
+    subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                     stderr=subprocess.PIPE)
+    logger.info('Finish creating requirements.txt file.')
+
+
 if __name__ == '__main__':
     logger = main.create_logger(file_name='Packaging logger')
     config_dict = make_config()
     validate_config(config_dict)
     ask_for_version(config_dict)
+    make_requirements_file()
     create_exe_file()
     dir_to_compress = copy_all_files_into_one_dir(config_dict)
     make_archive(config_dict['artifacts_package_file_path'], dir_to_compress)
