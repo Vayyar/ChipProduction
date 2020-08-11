@@ -3,6 +3,7 @@ import enum
 import json
 import logging
 import warnings
+
 import viewer
 from collections import Counter
 from logging.handlers import RotatingFileHandler
@@ -422,6 +423,7 @@ class WrongArgumentsException(Exception):
 
 
 def create_logger(file_name='ChipProductionLogger.log'):
+    warnings.filterwarnings("ignore")
     logger_inner_var = logging.getLogger('ChipProduction')
     logger_inner_var.setLevel(logging.DEBUG)
     file_handler = logging.FileHandler(file_name)
