@@ -1,6 +1,6 @@
 {
   "temp_dir_path": "../results/temp",
-  "artifacts_package_file_path": "../results/package_artifacts/DieCluster.exe",
+  "artifacts_package_file_path": "../results/package_artifacts/DieCluster",
   "neighbors_table_file_path":  "../resources/neighbors_table.json",
   "readme_file_path": "../README.md",
   "version_file_path": "version.txt",

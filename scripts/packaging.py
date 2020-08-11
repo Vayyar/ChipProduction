@@ -4,6 +4,7 @@ import subprocess
 import sys
 import time
 import traceback
+from datetime import datetime
 from pathlib import Path
 
 import main
@@ -113,9 +114,16 @@ def copy_all_files_into_one_dir(config):
     return directory_to_compress
 
 
+def add_date_and_version_for_dir(path):
+    version = get_version(config_dict['version_file_path'])
+    date_as_str = datetime.today().strftime('%Y_%m_%d_%H_%M_%S')
+    return path.parent / (path.stem + date_as_str + 'V' + version + path.suffix)
+
+
 def make_archive(artifact_path, directory_to_compress):
     logger.info('Starting make zip from all files.')
-    shutil.make_archive(artifact_path, 'zip', directory_to_compress)
+    artifact_path_with_date = add_date_and_version_for_dir(artifact_path)
+    shutil.make_archive(artifact_path_with_date, 'zip', directory_to_compress)
     logger.info('End make zip from all files.')
 
 
