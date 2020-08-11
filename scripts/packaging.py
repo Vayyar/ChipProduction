@@ -189,6 +189,12 @@ def make_requirements_file():
     logger.info('Finish creating requirements.txt file.')
 
 
+def delete_byproducts(config):
+    byproducts_path = [config_dict['intermediate_results_path'], config['temp_dir_path']]
+    for byproduct_path in byproducts_path:
+        shutil.rmtree(byproduct_path, ignore_errors=True)
+
+
 if __name__ == '__main__':
     logger = main.create_logger(file_name='Packaging logger')
     config_dict = make_config()
@@ -198,3 +204,4 @@ if __name__ == '__main__':
     create_exe_file(config_dict['intermediate_results_path'])
     dir_to_compress = copy_all_files_into_one_dir(config_dict)
     make_archive(config_dict['artifacts_package_file_path'], dir_to_compress)
+    delete_byproducts(config_dict)
