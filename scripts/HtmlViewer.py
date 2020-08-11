@@ -1,5 +1,6 @@
 import csv
 from itertools import product
+from pathlib import Path
 from string import Template
 
 import matplotlib.pyplot as plt
@@ -79,8 +80,7 @@ def make_and_save_table(figure_path, grid_text):
     cells_text = make_grid_of_chars(grid_text)
     colors = [[get_color(char) for char in row] for row in cells_text]
     figure, ax = plt.subplots()
-    ax.axis('tight')
-    ax.axis('off')
+    ax.axis("off")
     ax.table(cellText=cells_text, cellColours=colors, loc='center')
     plt.savefig(figure_path, bbox_inches="tight")
 
@@ -89,8 +89,10 @@ def make_final_page(images_paths, path_for_result):
     with open('figures_union_template.html', 'r') as skeleton:
         skeleton_page = skeleton.read()
     page_template = Template(skeleton_page)
+    relative_images_path = [Path('.') / Path(image_path).name for image_path in images_paths]
     html_page = page_template.substitute(
-        {'wafer_before': images_paths[0], 'wafer_summary': images_paths[1], 'wafer_after': images_paths[2]})
+        {'wafer_before': relative_images_path[0], 'wafer_summary': relative_images_path[1],
+         'wafer_after': relative_images_path[2]})
     with open(path_for_result, 'w') as final_page:
         final_page.write(html_page)
 
