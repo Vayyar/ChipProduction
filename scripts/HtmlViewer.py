@@ -1,5 +1,6 @@
 import csv
 from itertools import product
+from string import Template
 
 import matplotlib.pyplot as plt
 from PIL import Image
@@ -9,12 +10,12 @@ from PIL import ImageFont
 
 def plot_input_and_output(input_grid, output_grid, output_dir, input_file_name):
     images_paths = [output_dir / f'image_{idx}.jpg' for idx in range(3)]
-    make_and_save_table(images_paths[0], input_grid, title=f'Wafer before calling the program')
-    make_and_save_table(images_paths[2], output_grid, title=f'Wafer after calling the program')
+    make_and_save_table(images_paths[0], input_grid)
+    make_and_save_table(images_paths[2], output_grid)
     short_summary = make_summary(input_grid, output_grid, output_dir, input_file_name)
     make_text_figure(short_summary, images_paths[1])
-    result_image_path = output_dir / f'result_of_{input_file_name}.jpg'
-    merge_images(images_paths, result_image_path)
+    result_file_path = output_dir / f'result_of_{input_file_name}.html'
+    make_final_page(images_paths, result_file_path)
 
 
 def make_text_figure(text, image_path):
@@ -23,23 +24,6 @@ def make_text_figure(text, image_path):
     font = ImageFont.truetype("arial.ttf", 25)
     draw.text((0, 0), text, (0, 0, 0), font=font)
     img.save(image_path)
-
-
-def merge_images(images_paths, path_for_result):
-    images = [Image.open(x) for x in images_paths]
-    widths, heights = zip(*(i.size for i in images))
-
-    total_width = sum(widths)
-    max_height = max(heights)
-
-    new_im = Image.new('RGB', (total_width, max_height))
-
-    x_offset = 0
-    for im in images:
-        new_im.paste(im, (x_offset, 0))
-        x_offset += im.size[0]
-
-    new_im.save(path_for_result)
 
 
 def find_difference_coordinates(input_grid, output_grid):
@@ -91,16 +75,24 @@ def make_grid_of_chars(grid_text):
     return [[char for char in row] for row in rows_text]
 
 
-def make_and_save_table(figure_path, grid_text, title, additional_text=''):
+def make_and_save_table(figure_path, grid_text):
     cells_text = make_grid_of_chars(grid_text)
     colors = [[get_color(char) for char in row] for row in cells_text]
     figure, ax = plt.subplots()
-    figure.text(0.05, 0.95, title, size=24)
     ax.axis('tight')
     ax.axis('off')
-    ax.text(100, 100, additional_text)
     ax.table(cellText=cells_text, cellColours=colors, loc='center')
-    plt.savefig(figure_path)
+    plt.savefig(figure_path, bbox_inches="tight")
+
+
+def make_final_page(images_paths, path_for_result):
+    with open('figures_union_template.html', 'r') as skeleton:
+        skeleton_page = skeleton.read()
+    page_template = Template(skeleton_page)
+    html_page = page_template.substitute(
+        {'wafer_before': images_paths[0], 'wafer_summary': images_paths[1], 'wafer_after': images_paths[2]})
+    with open(path_for_result, 'w') as final_page:
+        final_page.write(html_page)
 
 
 colors_dict = {'.': "w", "1": "g", "X": "r", "Y": "y"}

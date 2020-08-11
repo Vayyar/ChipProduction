@@ -3,16 +3,17 @@ import enum
 import json
 import logging
 import warnings
-
-import viewer
 from collections import Counter
+from datetime import datetime
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 from string import Template
-from datetime import datetime
+
 from gooey import Gooey, GooeyParser
 from pystdf.IO import Parser
 from pystdf.V4 import prr
+
+import HtmlViewer
 
 logger = logging.getLogger('ChipProductionLogger')
 handler = RotatingFileHandler('ChipProductionLogger.log', maxBytes=100_000, backupCount=1)
@@ -494,8 +495,8 @@ def get_default_paths():
 
 
 def arguments_modification(args):
-    input_file_name = args.input_file_path.stem
-    args.output_dir_path /= f'results_of_{input_file_name}_Date_{datetime.today().strftime("%Y_%m_%d_%H_%M_%S")}'
+    input_filename = args.input_file_path.stem
+    args.output_dir_path /= f'results_of_{input_filename}_Date_{datetime.today().strftime("%Y_%m_%d_%H_%M_%S")}'
     Path.mkdir(args.output_dir_path)
 
 
@@ -510,7 +511,7 @@ if __name__ == '__main__':
     chips_grid, rest_of_file = parse_file(args.input_file_path)
     processed_grid = apply_algorithm_on_grid(chips_grid, args.neighbors_file_path)
     input_file_name = args.input_file_path.stem
-    viewer.plot_input_and_output(str(chips_grid), str(processed_grid), args.output_dir_path, input_file_name)
+    HtmlViewer.plot_input_and_output(str(chips_grid), str(processed_grid), args.output_dir_path, input_file_name)
     file_type = args.input_file_path.suffix
     result_text = combine_result_with_rest(processed_grid, rest_of_file, file_type)
     save_result_as_text(result_text, args.output_dir_path, args.input_file_path)
