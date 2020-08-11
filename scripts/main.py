@@ -9,7 +9,7 @@ from collections import Counter
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 from string import Template
-
+from datetime import datetime
 from gooey import Gooey, GooeyParser
 from pystdf.IO import Parser
 from pystdf.V4 import prr
@@ -493,6 +493,12 @@ def get_default_paths():
     return default_paths
 
 
+def arguments_modification(args):
+    input_file_name = args.input_file_path.stem
+    args.output_dir_path /= f'results_of_{input_file_name}_Date_{datetime.today().strftime("%Y_%m_%d_%H_%M_%S")}'
+    Path.mkdir(args.output_dir_path)
+
+
 if __name__ == '__main__':
     logger = create_logger()
     logger.info(f'Starting Die Cluster algorithm version {version}.')
@@ -500,6 +506,7 @@ if __name__ == '__main__':
     if args.verbose:
         change_all_log_levels_for_debug()
     arguments_validation(args)
+    arguments_modification(args)
     chips_grid, rest_of_file = parse_file(args.input_file_path)
     processed_grid = apply_algorithm_on_grid(chips_grid, args.neighbors_file_path)
     input_file_name = args.input_file_path.stem
