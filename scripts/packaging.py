@@ -86,12 +86,12 @@ def create_exe_file(intermediate_results_path):
     command = f'cd {cwd}/{intermediate_results_path} && pyinstaller --windowed --name DieCluster --onefile ' \
               f'{cwd}/main.py'
     try:
-        mini_logger = open(cwd / 'CreateExeLogger.txt', 'w')
-        with subprocess.Popen(command, stdin=subprocess.PIPE, stdout=mini_logger,
-                              stderr=mini_logger, shell=True) as process:
+        py_installer_logger = open(cwd / 'pyInstallerLogger.txt', 'w')
+        with subprocess.Popen(command, stdin=subprocess.PIPE, stdout=py_installer_logger,
+                              stderr=py_installer_logger, shell=True) as process:
             process.wait()
         logger.info('Ending create 1 exe from the project.')
-        mini_logger.close()
+        py_installer_logger.close()
     except Exception:
         logger.error('Failed creating 1 exe from the project.')
         line_length = 60
