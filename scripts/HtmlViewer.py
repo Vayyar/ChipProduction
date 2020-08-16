@@ -76,12 +76,20 @@ def make_grid_of_chars(grid_text):
     return [[char for char in row] for row in rows_text]
 
 
+def add_demo_axis(table):
+    table_with_y_axis = [list(range(1, len(table[0]) + 1))] + table
+    table_with_demo_axis = [[idx] + row for row, idx in
+                           zip(table_with_y_axis, list(range(0, len(table_with_y_axis) + 1)))]
+    return table_with_demo_axis
+
+
 def make_and_save_table(figure_path, grid_text):
     cells_text = make_grid_of_chars(grid_text)
-    colors = [[get_color(char) for char in row] for row in cells_text]
+    cells_text_with_demo_axis = add_demo_axis(cells_text)
+    colors = [[get_color(char) for char in row] for row in cells_text_with_demo_axis]
     figure, ax = plt.subplots()
     ax.axis("off")
-    ax.table(cellText=cells_text, cellColours=colors, loc='center')
+    ax.table(cellText=cells_text_with_demo_axis, cellColours=colors, loc='center')
     plt.savefig(figure_path, bbox_inches="tight")
 
 
@@ -101,4 +109,4 @@ colors_dict = {'.': "w", "1": "g", "X": "r", "Y": "y"}
 
 
 def get_color(char):
-    return colors_dict[char]
+    return colors_dict[char] if char in colors_dict else "pink"
