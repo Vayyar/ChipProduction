@@ -10,13 +10,12 @@ from PIL import ImageFont
 
 
 def plot_input_and_output(input_grid, output_grid, output_dir, input_file_name):
-    images_paths = [output_dir / f'image_{idx}.jpg' for idx in range(3)]
+    images_paths = [output_dir / f'image_{idx}.jpg' for idx in range(2)]
     make_and_save_table(images_paths[0], input_grid)
-    make_and_save_table(images_paths[2], output_grid)
+    make_and_save_table(images_paths[1], output_grid)
     short_summary = make_summary(input_grid, output_grid, output_dir, input_file_name)
-    make_text_figure(short_summary, images_paths[1])
     result_file_path = output_dir / f'result_of_{input_file_name}.html'
-    make_final_page(images_paths, result_file_path)
+    make_final_page(images_paths, result_file_path, short_summary)
 
 
 def make_text_figure(text, image_path):
@@ -93,14 +92,14 @@ def make_and_save_table(figure_path, grid_text):
     plt.savefig(figure_path, bbox_inches="tight")
 
 
-def make_final_page(images_paths, path_for_result):
+def make_final_page(images_paths, path_for_result, short_summary):
     with open('figures_union_template.html', 'r') as skeleton:
         skeleton_page = skeleton.read()
     page_template = Template(skeleton_page)
     relative_images_path = [Path('.') / Path(image_path).name for image_path in images_paths]
     html_page = page_template.substitute(
-        {'wafer_before': relative_images_path[0], 'wafer_summary': relative_images_path[1],
-         'wafer_after': relative_images_path[2]})
+        {'wafer_before': relative_images_path[0], 'wafer_summary': short_summary,
+         'wafer_after': relative_images_path[1]})
     with open(path_for_result, 'w') as final_page:
         final_page.write(html_page)
 
