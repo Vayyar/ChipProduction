@@ -49,12 +49,10 @@ def make_summary(input_grid, output_grid, output_dir, input_file_name):
     fail_at_the_end = output_grid.count('X') + output_grid.count('Y')
     difference_coordinates = find_difference_coordinates(input_grid, output_grid)
     difference_coordinates_str = ":".join(difference_coordinates)
-    short_summary = f'The wafer contains {number_of_chips} chips.\n' \
-                    f'From them {number_of_fail_chips} was failed\n' \
-                    f'And {number_of_pass_chips} was pass.\n' \
-                    f'We mark as fails some more {failed_by_prediction} chips.\n' \
-                    f'Total {fail_at_the_end} was failed.\n' \
-                    f'And {pass_at_the_end} was passed.\n'
+    short_summary = f'Original: {number_of_chips} chips.<br>' \
+                    f'Pass/ fail: {number_of_pass_chips} / {number_of_fail_chips}.<br>' \
+                    f'After Process:<br>' \
+                    f'Pass/ fail: {pass_at_the_end} / {fail_at_the_end} ({failed_by_prediction} new fails).<br>'
     summary_file_path = output_dir / f'{input_file_name}_summary.csv'
     with open(summary_file_path, mode='w', newline='') as csv_file:
         fieldnames = ['File name', 'Total chips', 'Initially failed', 'Initially passed', 'Failed by prediction',
