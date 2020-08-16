@@ -74,9 +74,10 @@ def make_grid_of_chars(grid_text):
 
 
 def add_demo_axis(table):
-    table_with_y_axis = [list(range(1, len(table[0]) + 1))] + table
+    table_with_y_axis = [list(range(0, len(table[0])))] + table
     table_with_demo_axis = [[idx] + row for row, idx in
-                           zip(table_with_y_axis, list(range(0, len(table_with_y_axis) + 1)))]
+                            zip(table_with_y_axis, list(range(-1, len(table_with_y_axis))))]
+    table_with_demo_axis[0][0] = '\\ '  # Origin
     return table_with_demo_axis
 
 
