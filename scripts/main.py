@@ -520,6 +520,7 @@ def arguments_modification(args):
     input_filename = args.input_wafer_path.stem
     args.output_dir_path /= f'results_of_{input_filename}_Date_{datetime.today().strftime("%Y_%m_%d_%H_%M_%S")}'
     Path.mkdir(args.output_dir_path)
+    utils.wait_for_path_to_exists(args.output_dir_path, maximum_time_to_wait=10)
 
 
 def main():
