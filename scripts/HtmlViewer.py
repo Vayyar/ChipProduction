@@ -1,9 +1,9 @@
-import csv
 from itertools import product
 from pathlib import Path
 from string import Template
 
 import matplotlib.pyplot as plt
+import pandas
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
@@ -53,18 +53,17 @@ def make_summary(input_grid, output_grid, output_dir, input_file_name):
                     f'Pass/ fail: {number_of_pass_chips} / {number_of_fail_chips}.<br>' \
                     f'After Process:<br>' \
                     f'Pass/ fail: {pass_at_the_end} / {fail_at_the_end} ({failed_by_prediction} new fails).<br>'
-    summary_file_path = output_dir / f'{input_file_name}_summary.csv'
-    with open(summary_file_path, mode='w', newline='') as csv_file:
-        fieldnames = ['File name', 'Total chips', 'Initially failed', 'Initially passed', 'Failed by prediction',
-                      'Total failed',
-                      'Total passed', 'Difference coordinates']
-        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
-        writer.writeheader()
-        row_values = [input_file_name, number_of_chips, number_of_fail_chips, number_of_pass_chips,
-                      failed_by_prediction, fail_at_the_end, pass_at_the_end, difference_coordinates_str]
-        rows_dict = {header: value for header, value in zip(fieldnames, row_values)}
-        writer.writerow(rows_dict)
 
+    fieldnames = ['File_name', 'Total_chips', 'Initially_failed', 'Initially_passed', 'Failed_by_prediction',
+                  'Total_failed',
+                  'Total_passed', 'Difference_coordinates']
+    row_values = [input_file_name, number_of_chips, number_of_fail_chips, number_of_pass_chips,
+                  failed_by_prediction, fail_at_the_end, pass_at_the_end, difference_coordinates_str]
+    data_frame_dict = {field_name: [row_value] for field_name, row_value in zip(fieldnames, row_values)}
+    data_frame = pandas.DataFrame.from_dict(data_frame_dict)
+    summary_file_path = output_dir / f'{input_file_name}_summary.xlsx'
+    with pandas.ExcelWriter(summary_file_path) as writer:
+        data_frame.to_excel(writer, sheet_name=input_file_name)
     return short_summary
 
 

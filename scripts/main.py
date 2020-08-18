@@ -9,7 +9,7 @@ from logging.handlers import RotatingFileHandler
 from pathlib import Path
 from string import Template
 
-from gooey import Gooey, GooeyParser
+from gooey import GooeyParser, Gooey
 from pystdf.IO import Parser
 from pystdf.V4 import prr
 
@@ -468,20 +468,23 @@ version = get_version()
 
 @Gooey(navigation='TABBED', show_success_modal=False, program_name='Die Cluster', program_description=f'Version '
                                                                                                       f'{version}')
-def get_argument():
+def get_argument(input_mode):
     logger.debug('Starting of getting the input arguments.')
     parser = GooeyParser()
     default_paths_dict = get_default_paths()
-    parser.add_argument('input_file_path', metavar='input file path', widget='FileChooser',
-                        default=default_paths_dict['input'],
-                        type=Path, help='path for input file.')
-    parser.add_argument('output_dir_path', metavar='output dir path', widget='DirChooser',
+    input_kind = 'file' if input_mode == 'File' else 'directory'
+    parser.add_argument(f'--input_wafer_path', metavar=f'input {input_kind} path',
+                        widget=f'{input_mode}Chooser',
+                        default=default_paths_dict[f'input_{input_kind}'],
+                        type=Path, help=f'path for input {input_kind}.')
+    parser.add_argument('--output_dir_path', metavar='output dir path', widget='DirChooser',
                         default=default_paths_dict['output'], type=Path,
                         help='path for output directory.')
-    parser.add_argument('neighbors_file_path', metavar='neighbors file path',
+    parser.add_argument('--neighbors_file_path', metavar='neighbors file path',
                         default=default_paths_dict['neighbors_table'], widget='FileChooser', type=Path,
                         help='path for table file.')
     parser.add_argument("-v", "--verbose", help="increase output verbosity", action="store_true")
+
     args = parser.parse_args()
     logger.debug('Finish of getting the input arguments.')
     return args
@@ -489,8 +492,9 @@ def get_argument():
 
 def get_default_paths():
     cwd = Path(__file__).parent
-    default_paths = {'input': cwd / 'example.txt', 'output': cwd / 'results',
-                     'neighbors_table': cwd / 'neighbors_table.json'}
+    default_paths = {'input_file': cwd / 'example.txt', 'output': cwd / 'results',
+                     'neighbors_table': cwd / 'neighbors_table.json',
+                     'input_directory': cwd / r'resources\Folder_of_stdfs'}
     return default_paths
 
 
@@ -500,19 +504,19 @@ def arguments_modification(args):
     Path.mkdir(args.output_dir_path)
 
 
-if __name__ == '__main__':
+def main(input_mode):
     logger = create_logger()
     logger.info(f'Starting Die Cluster algorithm version {version}.')
-    args = get_argument()
+    args = get_argument(input_mode)
     if args.verbose:
         change_all_log_levels_for_debug()
     arguments_validation(args)
     arguments_modification(args)
-    chips_grid, rest_of_file = parse_file(args.input_file_path)
+    chips_grid, rest_of_file = parse_file(args.input_wafer_path)
     processed_grid = apply_algorithm_on_grid(chips_grid, args.neighbors_file_path)
     input_file_name = args.input_file_path.stem
     HtmlViewer.plot_input_and_output(str(chips_grid), str(processed_grid), args.output_dir_path, input_file_name)
     file_type = args.input_file_path.suffix
     result_text = combine_result_with_rest(processed_grid, rest_of_file, file_type)
-    save_result_as_text(result_text, args.output_dir_path, args.input_file_path)
+    save_result_as_text(result_text, args.output_dir_path, args.input_wafer_path)
     logger.info('Finish of Die Cluster algorithm.')
