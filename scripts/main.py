@@ -523,6 +523,63 @@ def arguments_modification(args):
     utils.wait_for_path_to_exists(args.output_dir_path, maximum_time_to_wait=10)
 
 
+def get_excel_file(directory: Path):
+    for inode in directory.iterdir():
+        if inode.suffix == '.xlsx':
+            return inode
+
+
+def find_excel_paths(args):
+    output_directory = args.output_dir_path
+    excels_paths = []
+    for inode in output_directory.iterdir():
+        if not inode.is_dir():
+            continue
+        else:
+            excels_path = get_excel_file(inode)
+            if excels_path is None:
+                continue
+            excels_paths.append(excels_path)
+    return excels_paths
+
+
+def merge_to_one_sheet(one_line_files, output_directory):
+    data_frame = pandas.DataFrame()
+    for file in one_line_files:
+        if str(file).endswith('.xlsx'):
+            data_frame = data_frame.append(pandas.read_excel(file), ignore_index=True)
+    data_frame.head()
+    result_file_path = output_directory / 'summary_merged.xlsx'
+    data_frame.to_excel(result_file_path)
+    return result_file_path
+
+
+def merge_sheets(excel_files, output_directory):
+    result_excel_path = output_directory / 'summary_merged.xlsx'
+    book = load_workbook(result_excel_path)
+    with pandas.ExcelWriter(result_excel_path, engine='openpyxl') as writer:
+        writer.book = book
+        for excel_file in excel_files:
+            data_frame = pandas.read_excel(excel_file)
+            del data_frame['Unnamed: 0']  # delete first indexing column
+            data_frame.to_excel(writer, sheet_name=excel_file.stem)
+        writer.save()
+    return result_excel_path
+
+
+def create_one_excel(excel_paths, output_directory):
+    one_line_files = list(filter(lambda path: 'merge' not in str(path), excel_paths))
+    multi_line_files = list(set(excel_paths).difference(one_line_files))
+    path_1_sheet_file = merge_to_one_sheet(one_line_files, output_directory)
+    multi_line_files.insert(0, path_1_sheet_file)
+    merge_sheets(multi_line_files, output_directory)
+
+
+def merge_excels(args):
+    excel_paths = find_excel_paths(args)
+    create_one_excel(excel_paths, args.output_dir_path)
+
+
 def handle_directory(args):
     arguments_modification(args)
     input_directory: Path = args.input_wafer_path
