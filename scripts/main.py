@@ -466,16 +466,24 @@ def get_version():
 version = get_version()
 
 
+def get_input_mode():
+    with open(Path(__file__).parent / 'main_config.json') as config_json_file:
+        config = json.load(config_json_file)
+        return config['input_mode_Dir_or_File']
+
+
 def enable_long_paths(args):
     enable_long_path = "\\\\?\\"
     for attribute, attribute_value in vars(args).items():
         if 'path' in attribute:
             setattr(args, attribute, Path(enable_long_path + str(attribute_value)))
+
+
 @Gooey(navigation='TABBED', show_success_modal=False, program_name='Die Cluster', program_description=f'Version '
                                                                                                       f'{version}')
 def get_argument():
     logger.debug('Starting of getting the input arguments.')
-    input_mode = input()
+    input_mode = get_input_mode()
     parser = GooeyParser()
     default_paths_dict = get_default_paths()
     input_kind = 'file' if input_mode == 'File' else 'directory'
@@ -492,8 +500,9 @@ def get_argument():
     parser.add_argument("-v", "--verbose", help="increase output verbosity", action="store_true")
 
     args = parser.parse_args()
+    enable_long_paths(args)
     logger.debug('Finish of getting the input arguments.')
-    return args
+    return args, input_mode
 
 
 def get_default_paths():
