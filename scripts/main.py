@@ -523,12 +523,22 @@ def arguments_modification(args):
     utils.wait_for_path_to_exists(args.output_dir_path, maximum_time_to_wait=10)
 
 
-def main():
-    logger = create_logger()
-    logger.info(f'Starting Die Cluster algorithm version {version}.')
-    args = get_argument()
-    if args.verbose:
-        change_all_log_levels_for_debug()
+def handle_directory(args):
+    arguments_modification(args)
+    input_directory: Path = args.input_wafer_path
+    for file in input_directory.iterdir():
+        args_copy = copy.deepcopy(args)
+        args_copy.input_wafer_path = file
+        if file.is_dir():
+            handle_directory(args_copy)
+            continue
+        if file.suffix not in {'.stdf', '.txt'}:
+            continue
+        handle_file(args_copy)
+    merge_excels(args)
+
+
+def handle_file(args):
     arguments_validation(args)
     arguments_modification(args)
     chips_grid, rest_of_file = parse_file(args.input_wafer_path)
@@ -542,4 +552,12 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    logger = create_logger()
+    logger.info(f'Starting Die Cluster algorithm version {version}.')
+    args, input_mode = get_argument()
+    if args.verbose:
+        change_all_log_levels_for_debug()
+    if input_mode == 'Dir':
+        handle_directory(args)
+    else:
+        handle_file(args)
