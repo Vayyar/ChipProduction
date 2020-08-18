@@ -466,6 +466,11 @@ def get_version():
 version = get_version()
 
 
+def enable_long_paths(args):
+    enable_long_path = "\\\\?\\"
+    for attribute, attribute_value in vars(args).items():
+        if 'path' in attribute:
+            setattr(args, attribute, Path(enable_long_path + str(attribute_value)))
 @Gooey(navigation='TABBED', show_success_modal=False, program_name='Die Cluster', program_description=f'Version '
                                                                                                       f'{version}')
 def get_argument():
