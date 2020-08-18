@@ -516,9 +516,13 @@ def get_default_paths():
     return default_paths
 
 
+def get_date():
+    return datetime.today().strftime("%Y_%m_%d_%H_%M_%S")
+
+
 def arguments_modification(args):
     input_filename = args.input_wafer_path.stem
-    args.output_dir_path /= f'results_of_{input_filename}_Date_{datetime.today().strftime("%Y_%m_%d_%H_%M_%S")}'
+    args.output_dir_path /= f'results_of_{input_filename}_Date_{get_date()}'
     Path.mkdir(args.output_dir_path)
     utils.wait_for_path_to_exists(args.output_dir_path, maximum_time_to_wait=10)
 
@@ -555,13 +559,14 @@ def merge_to_one_sheet(one_line_files, output_directory):
 
 
 def merge_sheets(excel_files, output_directory):
-    result_excel_path = output_directory / 'summary_merged.xlsx'
+    result_excel_path = output_directory / f'summary_merged_{get_date()}.xlsx'
     book = load_workbook(result_excel_path)
     with pandas.ExcelWriter(result_excel_path, engine='openpyxl') as writer:
         writer.book = book
         for excel_file in excel_files:
             data_frame = pandas.read_excel(excel_file)
-            del data_frame['Unnamed: 0']  # delete first indexing column
+            un_named_columns = data_frame.columns.str.contains('unnamed', case=False)
+            data_frame.drop(data_frame.columns[un_named_columns], axis=1, inplace=True)  # delete first indexing column
             data_frame.to_excel(writer, sheet_name=excel_file.stem)
         writer.save()
     return result_excel_path
