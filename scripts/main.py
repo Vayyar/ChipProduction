@@ -468,19 +468,20 @@ version = get_version()
 
 @Gooey(navigation='TABBED', show_success_modal=False, program_name='Die Cluster', program_description=f'Version '
                                                                                                       f'{version}')
-def get_argument(input_mode):
+def get_argument():
     logger.debug('Starting of getting the input arguments.')
+    input_mode = input()
     parser = GooeyParser()
     default_paths_dict = get_default_paths()
     input_kind = 'file' if input_mode == 'File' else 'directory'
-    parser.add_argument(f'--input_wafer_path', metavar=f'input {input_kind} path',
+    parser.add_argument(f'input_wafer_path', metavar=f'input {input_kind} path',
                         widget=f'{input_mode}Chooser',
                         default=default_paths_dict[f'input_{input_kind}'],
                         type=Path, help=f'path for input {input_kind}.')
-    parser.add_argument('--output_dir_path', metavar='output dir path', widget='DirChooser',
+    parser.add_argument('output_dir_path', metavar='output dir path', widget='DirChooser',
                         default=default_paths_dict['output'], type=Path,
                         help='path for output directory.')
-    parser.add_argument('--neighbors_file_path', metavar='neighbors file path',
+    parser.add_argument('neighbors_file_path', metavar='neighbors file path',
                         default=default_paths_dict['neighbors_table'], widget='FileChooser', type=Path,
                         help='path for table file.')
     parser.add_argument("-v", "--verbose", help="increase output verbosity", action="store_true")
@@ -499,24 +500,28 @@ def get_default_paths():
 
 
 def arguments_modification(args):
-    input_filename = args.input_file_path.stem
+    input_filename = args.input_wafer_path.stem
     args.output_dir_path /= f'results_of_{input_filename}_Date_{datetime.today().strftime("%Y_%m_%d_%H_%M_%S")}'
     Path.mkdir(args.output_dir_path)
 
 
-def main(input_mode):
+def main():
     logger = create_logger()
     logger.info(f'Starting Die Cluster algorithm version {version}.')
-    args = get_argument(input_mode)
+    args = get_argument()
     if args.verbose:
         change_all_log_levels_for_debug()
     arguments_validation(args)
     arguments_modification(args)
     chips_grid, rest_of_file = parse_file(args.input_wafer_path)
     processed_grid = apply_algorithm_on_grid(chips_grid, args.neighbors_file_path)
-    input_file_name = args.input_file_path.stem
+    input_file_name = args.input_wafer_path.stem
     HtmlViewer.plot_input_and_output(str(chips_grid), str(processed_grid), args.output_dir_path, input_file_name)
-    file_type = args.input_file_path.suffix
+    file_type = args.input_wafer_path.suffix
     result_text = combine_result_with_rest(processed_grid, rest_of_file, file_type)
     save_result_as_text(result_text, args.output_dir_path, args.input_wafer_path)
     logger.info('Finish of Die Cluster algorithm.')
+
+
+if __name__ == '__main__':
+    main()
