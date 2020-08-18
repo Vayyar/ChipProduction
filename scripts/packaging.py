@@ -2,12 +2,12 @@ import json
 import shutil
 import subprocess
 import sys
-import time
 import traceback
 from datetime import datetime
 from pathlib import Path
 
 import main
+from utils import wait_for_path_to_exists
 
 
 def make_config():
@@ -59,22 +59,6 @@ def make_list_of_files_to_copy(config):
 
 def copy_files_into(copy_into_me, need_copy_paths):
     list(map(lambda path: shutil.copy(path, copy_into_me), need_copy_paths))
-
-
-class PathDoesntExistsException(Exception):
-    pass
-
-
-def wait_for_path_to_exists(path):
-    counter = 0
-    time_to_wait = 0.01
-    maximum_time_to_wait = 2
-    while not Path.exists(path) and counter < maximum_time_to_wait:
-        time.sleep(time_to_wait)
-        counter += time_to_wait
-    if counter >= maximum_time_to_wait:
-        logger.error(f"The path {path} was not created")
-        raise PathDoesntExistsException()
 
 
 def create_exe_file(intermediate_results_path):
