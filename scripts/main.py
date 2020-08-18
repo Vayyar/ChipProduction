@@ -559,7 +559,7 @@ def merge_to_one_sheet(one_line_files, output_directory):
 
 
 def merge_sheets(excel_files, output_directory):
-    result_excel_path = output_directory / f'summary_merged_{get_date()}.xlsx'
+    result_excel_path = output_directory / f'summary_merged.xlsx'
     book = load_workbook(result_excel_path)
     with pandas.ExcelWriter(result_excel_path, engine='openpyxl') as writer:
         writer.book = book
