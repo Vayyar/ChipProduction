@@ -11,7 +11,6 @@ from string import Template
 
 import pandas
 from gooey import GooeyParser, Gooey
-from openpyxl import load_workbook
 from pystdf.IO import Parser
 from pystdf.V4 import prr
 
@@ -553,20 +552,18 @@ def merge_to_one_sheet(one_line_files, output_directory):
         if str(file).endswith('.xlsx'):
             data_frame = data_frame.append(pandas.read_excel(file), ignore_index=True)
     data_frame.head()
-    result_file_path = output_directory / 'summary_merged.xlsx'
+    result_file_path = output_directory / f'summary_merged_{str(one_line_files[0].stem)}.xlsx'
+    utils.drop_un_named_columns(data_frame)
     data_frame.to_excel(result_file_path)
     return result_file_path
 
 
 def merge_sheets(excel_files, output_directory):
-    result_excel_path = output_directory / f'summary_merged.xlsx'
-    book = load_workbook(result_excel_path)
+    result_excel_path = output_directory.parent / f'summary_merged_{str(output_directory.stem)}.xlsx'
     with pandas.ExcelWriter(result_excel_path, engine='openpyxl') as writer:
-        writer.book = book
         for excel_file in excel_files:
             data_frame = pandas.read_excel(excel_file)
-            un_named_columns = data_frame.columns.str.contains('unnamed', case=False)
-            data_frame.drop(data_frame.columns[un_named_columns], axis=1, inplace=True)  # delete first indexing column
+            utils.drop_un_named_columns(data_frame)
             data_frame.to_excel(writer, sheet_name=excel_file.stem)
         writer.save()
     return result_excel_path
@@ -574,10 +571,12 @@ def merge_sheets(excel_files, output_directory):
 
 def create_one_excel(excel_paths, output_directory):
     one_line_files = list(filter(lambda path: 'merge' not in str(path), excel_paths))
-    multi_line_files = list(set(excel_paths).difference(one_line_files))
-    path_1_sheet_file = merge_to_one_sheet(one_line_files, output_directory)
-    multi_line_files.insert(0, path_1_sheet_file)
-    merge_sheets(multi_line_files, output_directory)
+    multi_line_files = list(filter(lambda path: 'merge' in str(path), excel_paths))
+    if len(one_line_files) != 0:
+        path_1_sheet_file = merge_to_one_sheet(one_line_files, output_directory)
+        multi_line_files.insert(0, path_1_sheet_file)
+    if len(multi_line_files) != 0:
+        merge_sheets(multi_line_files, output_directory)
 
 
 def merge_excels(args):
