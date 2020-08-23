@@ -20,3 +20,8 @@ def get_inner_dir_path(directory_path: Path):
     for file in directory_path.iterdir():
         if file.is_dir():
             return file
+
+
+def drop_un_named_columns(data_frame):
+    un_named_columns = data_frame.columns.str.contains('unnamed', case=False)
+    data_frame.drop(data_frame.columns[un_named_columns], axis=1, inplace=True)  # delete first indexing column
