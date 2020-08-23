@@ -1,21 +1,33 @@
+import multiprocessing
 from itertools import product
 from pathlib import Path
 from string import Template
-
+from multiprocessing import Process
 import matplotlib.pyplot as plt
 import pandas
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
 
+import utils
+
 
 def plot_input_and_output(input_grid, output_grid, output_dir, input_file_name):
     images_paths = [output_dir / f'image_{idx}.jpg' for idx in range(2)]
-    make_and_save_table(images_paths[0], input_grid)
-    make_and_save_table(images_paths[1], output_grid)
+    make_wafer_images_in_parallel(input_grid, output_grid, images_paths)
     short_summary = make_summary(input_grid, output_grid, output_dir, input_file_name)
     result_file_path = output_dir / f'result_of_{input_file_name}.html'
     make_final_page(images_paths, result_file_path, short_summary)
+
+
+def make_wafer_images_in_parallel(input_grid, output_grid, images_paths):
+    multiprocessing.set_start_method('spawn')
+    image_0_process = Process(target=make_and_save_table, args=(images_paths[0], input_grid))
+    image_1_process = Process(target=make_and_save_table, args=(images_paths[1], output_grid))
+    image_0_process.start()
+    image_1_process.start()
+    image_0_process.join()
+    image_1_process.join()
 
 
 def make_text_figure(text, image_path):
@@ -61,6 +73,7 @@ def make_summary(input_grid, output_grid, output_dir, input_file_name):
                   failed_by_prediction, fail_at_the_end, pass_at_the_end, difference_coordinates_str]
     data_frame_dict = {field_name: [row_value] for field_name, row_value in zip(fieldnames, row_values)}
     data_frame = pandas.DataFrame.from_dict(data_frame_dict)
+    utils.drop_un_named_columns(data_frame)
     summary_file_path = output_dir / f'{input_file_name}_summary.xlsx'
     with pandas.ExcelWriter(summary_file_path) as writer:
         data_frame.to_excel(writer, sheet_name=input_file_name)
@@ -88,6 +101,9 @@ def make_and_save_table(figure_path, grid_text):
     ax.axis("off")
     ax.table(cellText=cells_text_with_demo_axis, cellColours=colors, loc='center')
     plt.savefig(figure_path, bbox_inches="tight")
+    # To save time
+    plt.cla()
+    plt.clf()
 
 
 def make_final_page(images_paths, path_for_result, short_summary):
