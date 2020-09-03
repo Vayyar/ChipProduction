@@ -392,26 +392,49 @@ def choose_output_filename(input_path):
     return f'result_of_{input_path.stem}.txt'  # {input_path.suffix}'
 
 
+def short_the_path(path):
+    path_as_str = str(path)
+    path_as_str_reversed = path_as_str[::-1]
+    if '..' not in path_as_str_reversed:
+        return path
+    first_backward_index = path_as_str_reversed.index('..')
+    if first_backward_index >= len(path_as_str_reversed) - 2:
+        return path
+    last_index_to_remove = path_as_str_reversed[first_backward_index + 3:].index('\\') + first_backward_index + 3
+    path_as_str_reversed_short = path_as_str_reversed[0:first_backward_index] + path_as_str_reversed[
+                                                                                last_index_to_remove + 1:]
+    short_path_as_str = path_as_str_reversed_short[::-1]
+    short_path = Path(short_path_as_str)
+    return short_the_path(short_path)
+
+
 def arguments_validation(arguments):
     logger.debug('Starting validating input arguments.')
     for attribute, attribute_argument in vars(arguments).items():
         if not isinstance(attribute_argument, Path):
             continue
-        if not attribute_argument.exists():
-            raise WrongArgumentsException(f"The path {attribute_argument} don't exist")
-        if 'dir' in attribute and attribute_argument.is_file():
-            raise WrongArgumentsException(f"The path {attribute_argument} is a file while we expect to a directory")
-        if 'file' in attribute and attribute_argument.is_dir():
-            raise WrongArgumentsException(f"The path {attribute_argument} is a directory while we expect a file")
-        if 'file' in attribute and attribute_argument.is_dir():
-            raise WrongArgumentsException(f"The path {attribute_argument} is a directory while we expect a file")
+        attribute_argument_without_prefix = short_the_path(attribute_argument)
+        setattr(arguments, attribute, attribute_argument_without_prefix)
+        if not attribute_argument_without_prefix.exists():
+            raise WrongArgumentsException(f"The path {attribute_argument_without_prefix} don't exist")
+        if 'dir' in attribute and attribute_argument_without_prefix.is_file():
+            raise WrongArgumentsException(
+                f"The path {attribute_argument_without_prefix} is a file while we expect to a directory")
+        if 'file' in attribute and attribute_argument_without_prefix.is_dir():
+            raise WrongArgumentsException(
+                f"The path {attribute_argument_without_prefix} is a directory while we expect a file")
+        if 'file' in attribute and attribute_argument_without_prefix.is_dir():
+            raise WrongArgumentsException(
+                f"The path {attribute_argument_without_prefix} is a directory while we expect a file")
         if 'file' in attribute:
-            if attribute_argument.is_dir():
-                raise WrongArgumentsException(f"The path {attribute_argument} is a directory while we expect a file")
+            if attribute_argument_without_prefix.is_dir():
+                raise WrongArgumentsException(
+                    f"The path {attribute_argument_without_prefix} is a directory while we expect a file")
             supported_file_types = {'.txt', '.stdf'}
-            if 'input' in attribute and attribute_argument.suffix not in supported_file_types:
-                raise WrongArgumentsException(f"The type of the file {attribute_argument.name} is not supported"
-                                              f" we support only .txt and .stdf file types.")
+            if 'input' in attribute and attribute_argument_without_prefix.suffix not in supported_file_types:
+                raise WrongArgumentsException(
+                    f"The type of the file {attribute_argument_without_prefix.name} is not supported"
+                    f" we support only .txt and .stdf file types.")
         logger.debug('Finish validating input arguments.')
 
 
@@ -438,7 +461,7 @@ def create_logger(file_name='ChipProductionLogger.log'):
     console_handler = logging.StreamHandler()
     console_handler_formatter = logging.Formatter(f'%(asctime)s - %(levelname)s - %(message)s')
     console_handler.setFormatter(console_handler_formatter)
-    console_handler.setLevel(logging.INFO)
+    console_handler.setLevel(logging.DEBUG)
     logger_inner_var.addHandler(console_handler)
     return logger_inner_var
 

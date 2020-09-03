@@ -24,12 +24,14 @@ class UnitTests(unittest.TestCase):
         results_path = cwd / f'../unit_tests/consistency_test__Date_{datetime.today().strftime("%Y_%m_%d_%H_%M_%S")}'
         neighbors_file_path = cwd / '../resources/neighbors_table.json'
         Path.mkdir(results_path)
+        utils.wait_for_path_to_exists(results_path)
         command = ['python', '-u', f'{main_script_path}', '--ignore-gooey', f'{stdf_file_path}',
                    f'{results_path}',
                    f'{neighbors_file_path}']
-
+        print(' '.join(command))
         subprocess.run(command, input='File\n', stdout=subprocess.PIPE,
                        stderr=subprocess.PIPE, encoding='ascii')
+
         result_file_path = utils.get_inner_dir_path(results_path) / main.choose_output_filename(stdf_file_path)
         utils.wait_for_path_to_exists(result_file_path, maximum_time_to_wait=60)
         with open(result_file_path, 'r') as result_file:
