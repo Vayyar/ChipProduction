@@ -2,10 +2,12 @@ import copy
 import enum
 import json
 import logging
+import multiprocessing
 import warnings
 from collections import Counter
 from datetime import datetime
 from logging.handlers import RotatingFileHandler
+from multiprocessing import Process
 from pathlib import Path
 from string import Template
 
@@ -584,18 +586,37 @@ def merge_excels(args):
     create_one_excel(excel_paths, args.output_dir_path)
 
 
+def start_processes(processes):
+    for process in processes:
+        process.start()
+
+
+def wait_for_processes(processes):
+    for process in processes:
+        process.join()
+
+
+def start_and_wait_for_processes(processes):
+    start_processes(processes)
+    wait_for_processes(processes)
+
+
 def handle_directory(args):
     arguments_modification(args)
     input_directory: Path = args.input_wafer_path
+    directories_process = []
     for file in input_directory.iterdir():
         args_copy = copy.deepcopy(args)
         args_copy.input_wafer_path = file
         if file.is_dir():
-            handle_directory(args_copy)
+            directory_process = Process(target=handle_directory, args=(args_copy,))
+            directories_process.append(directory_process)
             continue
         if file.suffix not in {'.stdf', '.txt'}:
             continue
-        handle_file(args_copy)
+        directory_process = Process(target=handle_file, args=(args_copy,))
+        directories_process.append(directory_process)
+    start_and_wait_for_processes(directories_process)
     merge_excels(args)
 
 

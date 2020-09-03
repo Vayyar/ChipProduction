@@ -21,6 +21,7 @@ def plot_input_and_output(input_grid, output_grid, output_dir, input_file_name):
 
 
 def make_wafer_images_in_parallel(input_grid, output_grid, images_paths):
+    multiprocessing.set_start_method('spawn')
     image_0_process = Process(target=make_and_save_table, args=(images_paths[0], input_grid))
     image_1_process = Process(target=make_and_save_table, args=(images_paths[1], output_grid))
     image_0_process.start()
