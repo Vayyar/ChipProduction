@@ -3,6 +3,7 @@ import shutil
 import subprocess
 import sys
 import traceback
+import os
 from datetime import datetime
 from pathlib import Path
 
@@ -68,8 +69,10 @@ def create_exe_file(intermediate_results_path):
         Path.mkdir(intermediate_results_path, parents=True)
         wait_for_path_to_exists(intermediate_results_path)
     cwd = Path(__file__).parent
-    command = f'cd {cwd}/{intermediate_results_path} && pyinstaller --windowed --name DieCluster --onefile ' \
+    os.chdir(str(cwd/intermediate_results_path))
+    command = f'pyinstaller --windowed --name DieCluster --onefile ' \
               f'{cwd}/main.py'
+    print(command)
     try:
         py_installer_logger = open(cwd / 'pyInstallerLogger.txt', 'w')
         with subprocess.Popen(command, stdin=subprocess.PIPE, stdout=py_installer_logger,
@@ -85,6 +88,7 @@ def create_exe_file(intermediate_results_path):
         print(line)
         traceback.print_exc(file=sys.stdout)
         print(line)
+    os.chdir(str(cwd))
 
 
 def copy_all_files_into_one_dir(config):
