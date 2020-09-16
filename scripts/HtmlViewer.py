@@ -21,8 +21,9 @@ def plot_input_and_output(input_grid, output_grid, output_dir, input_file_name):
 
 
 def make_wafer_images_in_parallel(input_grid, output_grid, images_paths):
-    make_and_save_table(images_paths[0], input_grid)
-    make_and_save_table(images_paths[1], output_grid)
+    pass
+    #make_and_save_table(images_paths[0], input_grid)
+    #make_and_save_table(images_paths[1], output_grid)
 
 
 def make_text_figure(text, image_path):
