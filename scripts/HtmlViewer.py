@@ -1,8 +1,9 @@
-import multiprocessing
+import sys
 from itertools import product
+from multiprocessing import Process
 from pathlib import Path
 from string import Template
-from multiprocessing import Process
+
 import matplotlib.pyplot as plt
 import pandas
 from PIL import Image
@@ -106,7 +107,7 @@ def make_and_save_table(figure_path, grid_text):
 
 
 def make_final_page(images_paths, path_for_result, short_summary):
-    with open('figures_union_template.html', 'r') as skeleton:
+    with open(Path(sys.argv[0]).parent / 'figures_union_template.html', 'r') as skeleton:
         skeleton_page = skeleton.read()
     page_template = Template(skeleton_page)
     relative_images_path = [Path('.') / Path(image_path).name for image_path in images_paths]
