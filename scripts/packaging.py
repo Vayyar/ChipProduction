@@ -55,7 +55,7 @@ def validate_config(config):
 def make_list_of_files_to_copy(config):
     files_to_copy = [config["neighbors_table_file_path"], config["readme_file_path"],
                      config["version_file_path"], config["exe_file_path"], '.\\requirements.txt',
-                     config['main_config_file_path']]
+                     config['main_config_file_path'], config['figures_union_template_html']]
     return files_to_copy
 
 

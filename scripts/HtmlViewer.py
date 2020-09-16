@@ -1,6 +1,5 @@
 import sys
 from itertools import product
-from multiprocessing import Process
 from pathlib import Path
 from string import Template
 
@@ -22,12 +21,8 @@ def plot_input_and_output(input_grid, output_grid, output_dir, input_file_name):
 
 
 def make_wafer_images_in_parallel(input_grid, output_grid, images_paths):
-    image_0_process = Process(target=make_and_save_table, args=(images_paths[0], input_grid))
-    image_1_process = Process(target=make_and_save_table, args=(images_paths[1], output_grid))
-    image_0_process.start()
-    image_1_process.start()
-    image_0_process.join()
-    image_1_process.join()
+    make_and_save_table(images_paths[0], input_grid)
+    make_and_save_table(images_paths[1], output_grid)
 
 
 def make_text_figure(text, image_path):
