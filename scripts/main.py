@@ -6,11 +6,10 @@ import sys
 import warnings
 from collections import Counter
 from datetime import datetime
+from itertools import count
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 from string import Template
-from itertools import count
-
 
 import pandas
 from gooey import GooeyParser, Gooey
@@ -394,28 +393,12 @@ def choose_output_filename(input_path):
     return f'result_of_{input_path.stem}.txt'  # {input_path.suffix}'
 
 
-def short_the_path(path):
-    path_as_str = str(path)
-    path_as_str_reversed = path_as_str[::-1]
-    if '..' not in path_as_str_reversed:
-        return path
-    first_backward_index = path_as_str_reversed.index('..')
-    if first_backward_index >= len(path_as_str_reversed) - 2:
-        return path
-    last_index_to_remove = path_as_str_reversed[first_backward_index + 3:].index('\\') + first_backward_index + 3
-    path_as_str_reversed_short = path_as_str_reversed[0:first_backward_index] + path_as_str_reversed[
-                                                                                last_index_to_remove + 1:]
-    short_path_as_str = path_as_str_reversed_short[::-1]
-    short_path = Path(short_path_as_str)
-    return short_the_path(short_path)
-
-
 def arguments_validation(arguments):
     logger.debug('Starting validating input arguments.')
     for attribute, attribute_argument in vars(arguments).items():
         if not isinstance(attribute_argument, Path):
             continue
-        attribute_argument_without_prefix = short_the_path(attribute_argument)
+        attribute_argument_without_prefix = utils.short_the_path(attribute_argument)
         setattr(arguments, attribute, attribute_argument_without_prefix)
         if not attribute_argument_without_prefix.exists():
             raise WrongArgumentsException(f"The path {attribute_argument_without_prefix} don't exist")
@@ -511,14 +494,16 @@ def enable_long_paths(args):
                                                                                                       f'{version}')
 def get_argument():
     logger.debug('Starting of getting the input arguments.')
-    input_mode = get_input_mode()
     parser = GooeyParser()
     default_paths_dict = get_default_paths()
-    input_kind = 'file' if input_mode == 'File' else 'directory'
-    parser.add_argument(f'input_wafer_path', metavar=f'input {input_kind} path',
-                        widget=f'{input_mode}Chooser',
-                        default=default_paths_dict[f'input_{input_kind}'],
-                        type=Path, help=f'path for input {input_kind}.')
+    parser.add_argument(f'--input_file_path', metavar=f'input file path',
+                        widget=f'FileChooser',
+                        default=default_paths_dict[f'input_file'],
+                        type=Path, help=f'path for input file.')
+    parser.add_argument(f'--input_dir_path', metavar=f'input directory path',
+                        widget=f'DirChooser',
+                        default=default_paths_dict[f'input_directory'],
+                        type=Path, help=f'path for input directory.')
     parser.add_argument('output_dir_path', metavar='output dir path', widget='DirChooser',
                         default=default_paths_dict['output'], type=Path,
                         help='path for output directory.')
@@ -526,11 +511,16 @@ def get_argument():
                         default=default_paths_dict['neighbors_table'], widget='FileChooser', type=Path,
                         help='path for table file.')
     parser.add_argument("-v", "--verbose", help="increase output verbosity", action="store_true")
-
+    parser.add_argument("-i_dir", "--is_directory", metavar='is input is directory',
+                        help="Choose-if input is directory of wafers.",
+                        action="store_true")
     args = parser.parse_args()
+    args.input_wafer_path = args.input_dir_path if args.is_directory else args.input_file_path
+    delattr(args, 'input_file_path')
+    delattr(args, 'input_dir_path')
     enable_long_paths(args)
     logger.debug('Finish of getting the input arguments.')
-    return args, input_mode
+    return args
 
 
 def get_default_paths():
@@ -656,11 +646,10 @@ if __name__ == '__main__':
     numbers = count()
     logger = create_logger()
     logger.info(f'Starting Die Cluster algorithm version {version}.')
-    args, input_mode = get_argument()
+    args = get_argument()
     if args.verbose:
         change_all_log_levels_for_debug()
-    if input_mode == 'Dir':
-        root_dir = args.output_dir_path
+    if Path.is_dir(args.input_wafer_path):
         handle_directory(args)
     else:
         handle_file(args)

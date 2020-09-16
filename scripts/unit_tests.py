@@ -23,15 +23,19 @@ class UnitTests(unittest.TestCase):
         stdf_file_path = cwd / '../resources/N6W014_N6W014-19E5_WS_CP1_-40_20200313_110305.stdf'
         results_path = cwd / f'../unit_tests/consistency_test__Date_{datetime.today().strftime("%Y_%m_%d_%H_%M_%S")}'
         neighbors_file_path = cwd / '../resources/neighbors_table.json'
+        paths_to_short = [main_script_path, stdf_file_path, results_path, neighbors_file_path]
+        main_script_path, stdf_file_path, results_path, neighbors_file_path = tuple(
+            map(utils.short_the_path, paths_to_short))
         Path.mkdir(results_path)
         utils.wait_for_path_to_exists(results_path)
-        command = ['python', '-u', f'{main_script_path}', '--ignore-gooey', f'{stdf_file_path}',
+        command = ['python', '-u', f'{main_script_path}', '--ignore-gooey', '--input_file_path', f'{stdf_file_path}',
                    f'{results_path}',
                    f'{neighbors_file_path}']
         print(' '.join(command))
         subprocess.run(command, input='File\n', stdout=subprocess.PIPE,
                        stderr=subprocess.PIPE, encoding='ascii')
-
+        print(results_path)
+        print(utils.get_inner_dir_path(results_path))
         result_file_path = utils.get_inner_dir_path(results_path) / main.choose_output_filename(stdf_file_path)
         utils.wait_for_path_to_exists(result_file_path, maximum_time_to_wait=60)
         with open(result_file_path, 'r') as result_file:
