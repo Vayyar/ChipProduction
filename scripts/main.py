@@ -607,11 +607,9 @@ def create_one_excel(excel_paths, output_directory):
     one_line_files = list(filter(lambda path: 'merge' not in str(path), excel_paths))
     multi_line_files = list(filter(lambda path: 'merge' in str(path), excel_paths))
     if len(one_line_files) != 0:
-        print(f'merge_to_one_sheet,one_line_files = {one_line_files}, output_directory = {output_directory}')
         path_1_sheet_file = merge_to_one_sheet(one_line_files, output_directory)
         multi_line_files.insert(0, path_1_sheet_file)
     if len(multi_line_files) != 0:
-        print(f'merge_sheets, multi_line_files = {one_line_files}, output_directory = {output_directory}')
         merge_sheets(multi_line_files, output_directory)
 
 
