@@ -70,7 +70,7 @@ def make_summary(input_grid, output_grid, output_dir, input_file_name):
     data_frame_dict = {field_name: [row_value] for field_name, row_value in zip(fieldnames, row_values)}
     data_frame = pandas.DataFrame.from_dict(data_frame_dict)
     utils.drop_un_named_columns(data_frame)
-    summary_file_path = output_dir / f'{input_file_name}_summary.xlsx'
+    summary_file_path = output_dir / f'line_summary.xlsx'
     with pandas.ExcelWriter(summary_file_path) as writer:
         data_frame.to_excel(writer, sheet_name=input_file_name)
     return short_summary

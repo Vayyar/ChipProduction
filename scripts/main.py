@@ -9,6 +9,9 @@ from datetime import datetime
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 from string import Template
+from itertools import count
+
+
 import pandas
 from gooey import GooeyParser, Gooey
 from pystdf.IO import Parser
@@ -535,7 +538,7 @@ def get_default_paths():
     cwd = Path(sys.argv[0]).parents[1]
     default_paths = {'input_file': cwd / 'example.txt', 'output': cwd / 'results',
                      'neighbors_table': cwd / 'resources/neighbors_table.json',
-                     'input_directory': cwd / r'resources\Folder_of_stdfs'}
+                     'input_directory': cwd / r'resources/Folder_of_stdfs'}
     return default_paths
 
 
@@ -576,20 +579,27 @@ def merge_to_one_sheet(one_line_files, output_directory):
         if str(file).endswith('.xlsx'):
             data_frame = data_frame.append(pandas.read_excel(file), ignore_index=True)
     data_frame.head()
-    result_file_path = output_directory / f'summary_merged_{str(one_line_files[0].stem)}.xlsx'
+    result_file_path = output_directory / f'summary_1_sheet_merged_{next(numbers)}.xlsx'
     utils.drop_un_named_columns(data_frame)
-    data_frame.to_excel(result_file_path)
+    data_frame.to_excel(result_file_path, sheet_name=f'{next(numbers)}')
     return result_file_path
 
 
 def merge_sheets(excel_files, output_directory):
-    result_excel_path = output_directory.parent / f'summary_merged_{str(output_directory.stem)}.xlsx'
-    with pandas.ExcelWriter(result_excel_path, engine='openpyxl') as writer:
+    options = {}
+    options['strings_to_formulas'] = False
+    options['strings_to_urls'] = False
+    result_excel_path = output_directory / f'summary_merged_{next(numbers)}.xlsx'
+    with pandas.ExcelWriter(result_excel_path, engine='openpyxl', options=options) as writer:
         for excel_file in excel_files:
-            data_frame = pandas.read_excel(excel_file)
-            utils.drop_un_named_columns(data_frame)
-            data_frame.to_excel(writer, sheet_name=excel_file.stem)
-        writer.save()
+            result_data_frame = pandas.DataFrame()
+            sheets = pandas.ExcelFile(excel_file).sheet_names
+            for sheet in sheets:
+                data_frame = pandas.read_excel(excel_file, sheet_name=sheet)
+                utils.drop_un_named_columns(data_frame)
+                result_data_frame = result_data_frame.append(data_frame)
+            result_data_frame.to_excel(writer, sheet_name=excel_file.stem, index=False)
+            writer.save()
     return result_excel_path
 
 
@@ -597,9 +607,11 @@ def create_one_excel(excel_paths, output_directory):
     one_line_files = list(filter(lambda path: 'merge' not in str(path), excel_paths))
     multi_line_files = list(filter(lambda path: 'merge' in str(path), excel_paths))
     if len(one_line_files) != 0:
+        print(f'merge_to_one_sheet,one_line_files = {one_line_files}, output_directory = {output_directory}')
         path_1_sheet_file = merge_to_one_sheet(one_line_files, output_directory)
         multi_line_files.insert(0, path_1_sheet_file)
     if len(multi_line_files) != 0:
+        print(f'merge_sheets, multi_line_files = {one_line_files}, output_directory = {output_directory}')
         merge_sheets(multi_line_files, output_directory)
 
 
@@ -639,19 +651,18 @@ def handle_file(args):
     save_result_as_text(result_text, args.output_dir_path, args.input_wafer_path)
     logger.debug(f'Ending handling file {args.input_wafer_path}.')
 
+
 first_run = True
 
 if __name__ == '__main__':
-    if first_run:
-        first_run = False
-    else:
-        sys.exit(0)
+    numbers = count()
     logger = create_logger()
     logger.info(f'Starting Die Cluster algorithm version {version}.')
     args, input_mode = get_argument()
     if args.verbose:
         change_all_log_levels_for_debug()
     if input_mode == 'Dir':
+        root_dir = args.output_dir_path
         handle_directory(args)
     else:
         handle_file(args)
