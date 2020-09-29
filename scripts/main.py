@@ -525,10 +525,11 @@ def get_argument():
 
 def get_default_paths():
     print(sys.argv[0])
-    cwd = Path(sys.argv[0]).parents[1]
-    default_paths = {'input_file': cwd / 'example.txt', 'output': cwd / 'results',
-                     'neighbors_table': cwd / 'resources/neighbors_table.json',
-                     'input_directory': cwd / r'resources/Folder_of_stdfs'}
+    cwd = Path(sys.argv[0]).parent
+    root_dir = cwd.parent
+    default_paths = {'input_file': root_dir / 'example.txt', 'output': root_dir / 'results',
+                     'neighbors_table': cwd / 'neighbors_table.json',
+                     'input_directory': root_dir / r'resources/Folder_of_stdfs'}
     return default_paths
 
 
