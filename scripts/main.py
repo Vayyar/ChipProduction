@@ -616,11 +616,19 @@ def handle_file(args):
 
 first_run = True
 
+
+def create_relevant_directories(args):
+    path_to_create = args.output_dir_path
+    path_to_create.mkdir(parents=True, exist_ok=True)
+    utils.wait_for_path_to_exists(path_to_create)
+
+
 if __name__ == '__main__':
     numbers = count()
     logger = create_logger()
     logger.info(f'Starting Die Cluster algorithm version {version}.')
     args = get_argument()
+    create_relevant_directories(args)
     if args.verbose:
         change_all_log_levels_for_debug()
     if Path.is_dir(args.input_wafer_path):
