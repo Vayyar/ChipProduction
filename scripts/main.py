@@ -563,45 +563,18 @@ def find_excel_paths(args):
     return excels_paths
 
 
-def merge_to_one_sheet(one_line_files, output_directory):
+def create_one_excel(excel_paths, output_directory):
+    if len(excel_paths) == 0:
+        return None
     data_frame = pandas.DataFrame()
-    for file in one_line_files:
+    for file in excel_paths:
         if str(file).endswith('.xlsx'):
             data_frame = data_frame.append(pandas.read_excel(file), ignore_index=True)
     data_frame.head()
     result_file_path = output_directory / f'summary_1_sheet_merged_{next(numbers)}.xlsx'
     utils.drop_un_named_columns(data_frame)
-    data_frame.to_excel(result_file_path, sheet_name=f'{next(numbers)}')
+    data_frame.to_excel(result_file_path, sheet_name=f'{next(numbers)}', index=False)
     return result_file_path
-
-
-def merge_sheets(excel_files, output_directory):
-    options = {}
-    options['strings_to_formulas'] = False
-    options['strings_to_urls'] = False
-    result_excel_path = output_directory / f'summary_merged_{next(numbers)}.xlsx'
-    with pandas.ExcelWriter(result_excel_path, engine='openpyxl', options=options) as writer:
-        for excel_file in excel_files:
-            result_data_frame = pandas.DataFrame()
-            sheets = pandas.ExcelFile(excel_file).sheet_names
-            for sheet in sheets:
-                data_frame = pandas.read_excel(excel_file, sheet_name=sheet)
-                utils.drop_un_named_columns(data_frame)
-                result_data_frame = result_data_frame.append(data_frame)
-            result_data_frame.to_excel(writer, sheet_name=excel_file.stem, index=False)
-            writer.save()
-    return result_excel_path
-
-
-def create_one_excel(excel_paths, output_directory):
-    one_line_files = list(filter(lambda path: 'merge' not in str(path), excel_paths))
-    multi_line_files = list(filter(lambda path: 'merge' in str(path), excel_paths))
-    is_there_multi_line_files = len(multi_line_files) > 0
-    if len(one_line_files) != 0:
-        path_1_sheet_file = merge_to_one_sheet(one_line_files, output_directory)
-        multi_line_files.insert(0, path_1_sheet_file)
-    if is_there_multi_line_files:
-        merge_sheets(multi_line_files, output_directory)
 
 
 def merge_excels(args):

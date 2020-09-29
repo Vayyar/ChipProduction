@@ -55,7 +55,7 @@ def validate_config(config):
 def make_list_of_files_to_copy(config):
     files_to_copy = [config["neighbors_table_file_path"], config["readme_file_path"],
                      config["version_file_path"], config["exe_file_path"], '.\\requirements.txt',
-                     config['main_config_file_path'], config['figures_union_template_html']]
+                      config['figures_union_template_html']]
     return files_to_copy
 
 
@@ -181,8 +181,10 @@ def make_requirements_file():
     logger.info('Start creating requirements.txt file.')
     cwd = Path(__file__).parent
     command = ['pipreqs', str(cwd)]
-    subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+    process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                      stderr=subprocess.PIPE)
+    if process.wait() != 0:
+        logger.error(f'There was an error calling {" ".join(command)} you may install pipreqs')
     logger.info('Finish creating requirements.txt file.')
 
 

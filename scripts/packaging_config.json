@@ -6,6 +6,5 @@
   "version_file_path": "version.txt",
   "exe_file_path": "../results/intermediate/dist/DieCluster.exe",
   "intermediate_results_path": "../results/intermediate",
-  "main_config_file_path": "./main_config.json",
   "figures_union_template_html": "./figures_union_template.html"
 }
