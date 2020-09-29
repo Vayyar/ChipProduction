@@ -573,7 +573,7 @@ def create_one_excel(excel_paths, output_directory):
     data_frame.head()
     result_file_path = output_directory / f'summary_1_sheet_merged_{next(numbers)}.xlsx'
     utils.drop_un_named_columns(data_frame)
-    data_frame.to_excel(result_file_path, sheet_name=f'{next(numbers)}')
+    data_frame.to_excel(result_file_path, sheet_name=f'{next(numbers)}', index=False)
     return result_file_path
 
 
