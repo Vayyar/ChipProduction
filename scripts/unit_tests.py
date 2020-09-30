@@ -22,7 +22,7 @@ class UnitTests(unittest.TestCase):
         main_script_path = cwd / "main.py"
         stdf_file_path = cwd / '../resources/N6W014_N6W014-19E5_WS_CP1_-40_20200313_110305.stdf'
         results_path = cwd / f'../unit_tests/consistency_test__Date_{datetime.today().strftime("%Y_%m_%d_%H_%M_%S")}'
-        neighbors_file_path = cwd / '../resources/neighbors_table.json'
+        neighbors_file_path = cwd / r'.\neighbors_table.json'
         paths_to_short = [main_script_path, stdf_file_path, results_path, neighbors_file_path]
         main_script_path, stdf_file_path, results_path, neighbors_file_path = tuple(
             map(utils.short_the_path, paths_to_short))
